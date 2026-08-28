@@ -1,25 +1,41 @@
-import time
+from openai import OpenAI
 
-import test
+import prompts
 from response_parser import do_changes
 from state import state
+from settings import settings
 
+client = OpenAI(base_url=settings.BASE_URL, api_key=settings.API_KEY)
 
 def generate(task: str):
     state.is_code_generating = True
 
-    # print([{"role": "developer", "content": prompts.build_developer_prompt()}]
-    #       + state.chat_history +
-    #       [{"role": "user", "content": task}])
+    messages = (
+        [{"role": "developer", "content": prompts.build_developer_prompt()}] +
+        state.chat_history +
+        [{"role": "user", "content": task}]
+    )
 
-    output = test.test_response
+    response = client.chat.completions.create(
+        model=settings.MODEL,
+        messages=messages,
+        stream=True
+    )
 
-    for char in output:
-        time.sleep(0.001)
-        print(char, end="", flush=True)
+    full_output = ""
 
-    do_changes(output)
-    state.chat_history += [{"role": "user", "content": task}, {"role": "assistant", "content": output}]
+    for chunk in response:
+        content = chunk.choices[0].delta.content
+        if content:
+            print(content, end="", flush=True)
+            full_output += content
+    print("\n")
+
+    do_changes(full_output)
+    state.chat_history += [
+        {"role": "user", "content": task},
+        {"role": "assistant", "content": full_output}
+    ]
 
 
 def run_generation(new_task: str):

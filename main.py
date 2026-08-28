@@ -12,6 +12,10 @@ while True:
     try:
         command = input("> ")
 
+        if not command:
+            ui.draw_menu()
+            continue
+
         if not command.startswith("/"):
             generate.run_generation(command)
             ui.draw_menu()
@@ -20,7 +24,18 @@ while True:
         if command == "/exit":
             break
         elif command == "/help":
-            print("TODO") #TODO
+            print("""
+            Commands:
+
+              /help                  Show this help message
+              /add <file>            Add file(s) to the context
+              /drop <file>           Remove file(s) from the context
+              /dropall               Remove all files from the context
+              /clear                 Clear chat history
+              /exit                  Exit VibeLegacy
+
+            Anything without "/" is treated as a request to the AI.
+            """)
         elif command.startswith("/add "):
             founded_files = find_file_from_project(command[5:].strip())
             state.files_context.update(founded_files)
