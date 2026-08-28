@@ -48,6 +48,8 @@ while True:
             state.files_context.clear()
         elif command == "/clear":
             state.chat_history.clear()
+        else:
+            print(f"Unknown command. Try '/help' for more information.")
 
         ui.draw_menu()
 
