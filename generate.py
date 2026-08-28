@@ -25,13 +25,19 @@ def generate(task: str):
     full_output = ""
 
     for chunk in response:
+        if not chunk.choices:
+            continue
+
         content = chunk.choices[0].delta.content
+
         if content:
             print(content, end="", flush=True)
             full_output += content
+
     print("\n")
 
     do_changes(full_output)
+
     state.chat_history += [
         {"role": "user", "content": task},
         {"role": "assistant", "content": full_output}
@@ -43,5 +49,7 @@ def run_generation(new_task: str):
         generate(new_task)
     except Exception as e:
         print(f"Error: {e}")
+    except KeyboardInterrupt:
+        print("\n[Generation stopped]")
     finally:
         state.is_code_generating = False
