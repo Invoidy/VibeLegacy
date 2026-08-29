@@ -40,3 +40,12 @@ def undo_files():
         if myFile.name in state.unedited_added_files:
             with open(myFile.path, "w", encoding="UTF-8") as f:
                 f.write(state.unedited_added_files[myFile.name])
+
+def check_if_first_start():
+    fp = Path(__file__).resolve().parent / "first_start"
+
+    if fp.exists():
+        fp.unlink()
+        return True
+    else:
+        return False
