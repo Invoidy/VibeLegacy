@@ -4,6 +4,7 @@ import prompts
 from response_parser import do_changes
 from state import state
 from settings import settings
+import ui
 
 client = OpenAI(base_url=settings.BASE_URL, api_key=settings.API_KEY)
 
@@ -16,23 +17,29 @@ def generate(task: str):
         [{"role": "user", "content": task}]
     )
 
-    response = client.chat.completions.create(
-        model=settings.MODEL,
-        messages=messages,
-        stream=True
-    )
-
+    waiting_animation = ui.WaitingAnimation()
     full_output = ""
 
-    for chunk in response:
-        if not chunk.choices:
-            continue
+    waiting_animation.start()
+    try:
+        response = client.chat.completions.create(
+            model=settings.MODEL,
+            messages=messages,
+            stream=True
+        )
 
-        content = chunk.choices[0].delta.content
+        for chunk in response:
+            if not chunk.choices:
+                continue
 
-        if content:
-            print(content, end="", flush=True)
-            full_output += content
+            content = chunk.choices[0].delta.content
+
+            if content:
+                waiting_animation.stop()
+                print(content, end="", flush=True)
+                full_output += content
+    finally:
+        waiting_animation.stop()
 
     print("\n")
 
