@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 
-from utils import MyFile
+from models import MyFile
 
 
 @dataclass

@@ -1,13 +1,6 @@
-from dataclasses import dataclass
 from pathlib import Path
-
+from models import MyFile
 from state import state
-
-
-@dataclass(frozen=True)
-class MyFile:
-    path: Path
-    name: str
 
 
 def generate_files_tree() -> set[MyFile]:
