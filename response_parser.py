@@ -5,6 +5,9 @@ SEARCH_MARKER = "\n<<<<<<< SEARCH\n"
 DIVIDER_MARKER = "\n=======\n"
 REPLACE_MARKER = "\n>>>>>>> REPLACE"
 
+error_replaces = []
+error_index = 0
+
 def do_changes(response: str):
     edited_response = response
 
@@ -13,6 +16,10 @@ def do_changes(response: str):
             find_file = edited_response.find(FILE_LABEL)
 
             if find_file == -1:
+
+                if len(error_replaces) > 0:
+                    print(f"Formatting errors have been detected in the blocks {error_replaces}. Tip: You can ask the model to rewrite them.")
+
                 break
             else:
                 find_search = edited_response.find(SEARCH_MARKER, find_file)
@@ -37,6 +44,8 @@ def do_changes(response: str):
 
 
 def edit_file(file_name: str, find: str, replace: str):
+    global error_index
+    error_index += 1
 
     for file in state.files_context:
         if file_name == file.name:
@@ -44,6 +53,7 @@ def edit_file(file_name: str, find: str, replace: str):
                 file_data = f.read()
 
             if file_data.find(find) == -1:
+                error_replaces.append(error_index)
                 raise Exception(f"Find data not found in {file_name}")
 
             file_data = file_data.replace(find, replace)
