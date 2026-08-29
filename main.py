@@ -33,6 +33,7 @@ while True:
               /drop <file>           Remove file(s) from the context
               /dropall               Remove all files from the context
               /clear                 Clear chat history
+              /undo                   Restore files to their state before the last AI request
               /exit                  Exit VibeLegacy
 
             Anything without "/" is treated as a request to the AI.
