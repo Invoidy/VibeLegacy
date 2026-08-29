@@ -1,7 +1,7 @@
 import shutil
 
 import generate
-from utils import find_file_from_project, save_copy_of_files
+from utils import find_file_from_project, save_copy_of_files, undo_files
 import ui
 
 ui.draw_logo()
@@ -49,6 +49,9 @@ while True:
             state.files_context.clear()
         elif command == "/clear":
             state.chat_history.clear()
+        elif command == "/undo":
+            undo_files()
+
         else:
             print(f"Unknown command. Try '/help' for more information.")
 

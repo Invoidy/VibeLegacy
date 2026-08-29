@@ -42,3 +42,8 @@ def save_copy_of_files():
         with open(myFile.path, "r", encoding="UTF-8") as f:
             file_content = f.read()
             state.unedited_added_files[myFile.name] = file_content
+def undo_files():
+    for myFile in state.files_context:
+        if myFile.name in state.unedited_added_files:
+            with open(myFile.path, "w", encoding="UTF-8") as f:
+                f.write(state.unedited_added_files[myFile.name])
