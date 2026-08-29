@@ -1,5 +1,6 @@
 from pathlib import Path
-
+import os
+from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -12,5 +13,10 @@ class Settings(BaseSettings):
         env_file=Path(__file__).resolve().parent / ".env"
     )
 
-
-settings = Settings()
+try:
+    settings = Settings()
+except Exception as e:
+    env_folder = Path(__file__).resolve().parent
+    os.startfile(env_folder)
+    print("Error in env file. Pls configure it")
+    raise e
