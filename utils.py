@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from pathlib import Path
 
+from state import state
+
 
 @dataclass(frozen=True)
 class MyFile:
@@ -34,3 +36,9 @@ def find_file_from_project(search: str) -> set[MyFile]:
         print("No files found")
 
     return final_set
+
+def save_copy_of_files():
+    for myFile in state.files_context:
+        with open(myFile.path, "r", encoding="UTF-8") as f:
+            file_content = f.read()
+            state.unedited_added_files[myFile.name] = file_content

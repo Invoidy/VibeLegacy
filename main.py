@@ -1,7 +1,7 @@
 import shutil
 
 import generate
-from utils import find_file_from_project
+from utils import find_file_from_project, save_copy_of_files
 import ui
 
 ui.draw_logo()
@@ -17,6 +17,7 @@ while True:
             continue
 
         if not command.startswith("/"):
+            save_copy_of_files()
             generate.run_generation(command)
             ui.draw_menu()
             continue
