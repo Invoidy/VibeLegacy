@@ -17,7 +17,7 @@ def generate(task: str):
         [{"role": "user", "content": task}]
     )
 
-    waiting_animation = ui.WaitingAnimation()
+    waiting_animation = ui.WaitingAnimation(text="Waiting for AI response")
     full_output = ""
 
     waiting_animation.start()

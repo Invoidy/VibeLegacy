@@ -6,9 +6,10 @@ from state import state
 
 
 class WaitingAnimation:
-    def __init__(self):
+    def __init__(self, text):
         self._stop_event = threading.Event()
         self._thread = None
+        self.text = text
 
     def start(self):
         self._thread = threading.Thread(target=self._animate, daemon=True)
@@ -29,7 +30,7 @@ class WaitingAnimation:
         frame_index = 0
 
         while not self._stop_event.is_set():
-            sys.stdout.write(f"\rWaiting for AI response... {frames[frame_index]}")
+            sys.stdout.write(f"\r{self.text}... {frames[frame_index]}")
             sys.stdout.flush()
             frame_index = (frame_index + 1) % len(frames)
             self._stop_event.wait(0.12)
@@ -43,7 +44,7 @@ def draw_logo():
      ▀██▀  ██ ██▄█▀ ██▄▄▄ ██████ ██▄▄▄ ▀███▀ ██▀██ ▀████   █   
 
 
-    Vibe with control
+    Vibe with control | @Invoidy
 
 """ + "=" * shutil.get_terminal_size().columns)
 
