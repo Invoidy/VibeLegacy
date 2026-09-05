@@ -10,8 +10,6 @@ import os
 ui.draw_logo()
 
 if check_if_first_start():
-    import locale
-    language = locale.getlocale()[0]
 
     print("\n" + "=" * shutil.get_terminal_size().columns, end="")
     print("""Welcome to VibeLegacy!
@@ -29,25 +27,6 @@ if check_if_first_start():
     Once configured, just describe what you want to build or change, and VibeLegacy will handle the code changes.
     
     Have fun vibing — with control.
-    """)
-
-    print("\n" + "=" * shutil.get_terminal_size().columns, end="")
-
-    print("""Добро пожаловать в VibeLegacy!
-
-    Перед началом работы настройте файл `.CONFIG_ME`, указав необходимые API-настройки.
-
-    Посмотреть все доступные команды можно с помощью `/help`.
-
-    Основные команды:
-
-    * `/add <file>` — добавить файл к разговору
-    * `/drop <file>` — убрать прикреплённый файл
-    * `/clear` — очистить историю сообщений
-
-    После настройки просто опишите, что вы хотите создать или изменить, и VibeLegacy внесёт необходимые изменения в код.
-
-    Приятного вайба — но с контролем.
     """)
 
     print("\n" + "=" * shutil.get_terminal_size().columns, end="")
@@ -87,12 +66,12 @@ while True:
             Anything without "/" is treated as a request to the AI.
             """)
         elif command.startswith("/add "):
-            founded_files = find_file_from_project(command[5:].strip())
-            state.files_context.update(founded_files)
+            found_files = find_file_from_project(command[5:].strip())
+            state.files_context.update(found_files)
 
         elif command.startswith("/drop "):
-            founded_files = find_file_from_project(command[5:].strip())
-            state.files_context -= founded_files
+            found_files = find_file_from_project(command[5:].strip())
+            state.files_context -= found_files
 
         elif command == "/dropall":
             state.files_context.clear()
