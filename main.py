@@ -89,5 +89,3 @@ while True:
         print("\n" + "=" * shutil.get_terminal_size().columns, end="")
         if not state.is_code_generating:
             break
-    except Exception:
-        raise
