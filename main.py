@@ -1,39 +1,11 @@
 import shutil
 
 import generate
-from utils import find_file_from_project, save_copy_of_files, undo_files, check_if_first_start
+from utils import find_file_from_project, save_copy_of_files, undo_files
 import ui
 from state import state
-from pathlib import Path
-import os
 
 ui.draw_logo()
-
-if check_if_first_start():
-
-    print("\n" + "=" * shutil.get_terminal_size().columns, end="")
-    print("""Welcome to VibeLegacy!
-
-    Before you start, configure the `.CONFIG_ME` file with your API settings.
-    
-    You can view all available commands with `/help`.
-    
-    Main commands:
-    
-    * `/add <file>` — attach a file to the conversation
-    * `/drop <file>` — remove an attached file
-    * `/clear` — clear the message history
-    
-    Once configured, just describe what you want to build or change, and VibeLegacy will handle the code changes.
-    
-    Have fun vibing — with control.
-    """)
-
-    print("\n" + "=" * shutil.get_terminal_size().columns, end="")
-
-    env_folder = Path(__file__).resolve().parent
-    os.startfile(env_folder)
-    exit(0)
 
 while True:
     try:

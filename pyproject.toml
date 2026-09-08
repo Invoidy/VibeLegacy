@@ -6,5 +6,4 @@ dependencies = [
     "openai>=3.5.0",
     "pydantic-settings>=2.15.0",
     "pytest>=9.1.1",
-    "rich>=15.0.0",
 ]
