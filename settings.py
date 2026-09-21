@@ -10,7 +10,8 @@ if check_if_first_start():
     with open(Path(__file__).resolve().parent / ".CONFIG_ME", "w") as config_file:
         config_file.write("""BASE_URL=https://openrouter.ai/api/v1
 API_KEY=
-MODEL=openai/gpt-5.6-luna""")
+MODEL=openai/gpt-5.6-luna
+REASONING=""")
 
     print("\n" + "=" * shutil.get_terminal_size().columns, end="")
     print("""Welcome to VibeLegacy!
@@ -42,6 +43,7 @@ class Settings(BaseSettings):
     BASE_URL: NonEmptyStr
     API_KEY: NonEmptyStr
     MODEL: NonEmptyStr
+    REASONING: str | None
 
     model_config = SettingsConfigDict(
         env_file=Path(__file__).resolve().parent / ".CONFIG_ME"

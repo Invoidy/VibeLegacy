@@ -22,11 +22,19 @@ def generate(task: str):
 
     waiting_animation.start()
     try:
-        response = client.chat.completions.create(
-            model=settings.MODEL,
-            messages=messages,
-            stream=True
-        )
+        if settings.REASONING:
+            response = client.chat.completions.create(
+                model=settings.MODEL,
+                messages=messages,
+                extra_body={"reasoning": {"effort": settings.REASONING}},
+                stream=True
+            )
+        else:
+            response = client.chat.completions.create(
+                model=settings.MODEL,
+                messages=messages,
+                stream=True
+            )
 
         for chunk in response:
             if not chunk.choices:
