@@ -4,12 +4,13 @@ import generate
 from utils import find_file_from_project, save_copy_of_files, undo_files
 import ui
 from state import state
+from multiline_input import multiline_input
 
 ui.draw_logo()
 
 while True:
     try:
-        command = input("> ")
+        command = multiline_input("> ")
 
         if not command:
             ui.draw_menu()
