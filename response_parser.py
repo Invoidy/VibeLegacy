@@ -1,3 +1,17 @@
+# Example of find-replace block:
+#
+#
+#
+# File: path/to/file.ext
+# ```
+# <<<<<<< SEARCH
+# [exact existing lines, character-for-character, including whitespace/indentation]
+# =======
+# [new lines that replace them]
+# >>>>>>> REPLACE
+# ```
+#
+
 from state import state
 from dataclasses import dataclass, field
 
