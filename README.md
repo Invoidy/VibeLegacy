@@ -69,8 +69,8 @@ On the very first launch VibeLegacy creates a `.CONFIG_ME` file next to `vibeleg
 ```ini
 BASE_URL=https://openrouter.ai/api/v1
 API_KEY=
-MODEL=openai/gpt-5.6-luna
-REASONING=
+MODEL=openai/gpt-6-luna
+REASONING=high
 ```
 
 | Variable | Description |
@@ -91,19 +91,19 @@ REASONING=
 - Python 3.14 or newer
 - pip
 
-**Install**
-
-```bash
-git clone https://github.com/<your-username>/VibeLegacy.git
-cd VibeLegacy
-pip install -r requirements.txt
-```
-
 **Build a standalone executable with Nuitka**
 
 ```bash
+git clone https://github.com/Invoidy/VibeLegacy.git
+cd VibeLegacy
+
+python -m venv venv
+venv\Scripts\activate
+
+pip install -r requirements.txt
+
 pip install nuitka
-python -m nuitka --standalone --output-dir=dist --output-filename=vibelegacy.exe --include-data-files=first_start=first_start main.py
+python -m nuitka --standalone --remove-output --output-dir=dist --output-filename=vibelegacy.exe --include-data-files=first_start=first_start main.py
 ```
 
 The result is placed in `dist/main.dist/` (`dist` is already in `.gitignore`), with `vibelegacy.exe` inside. Keep the `first_start` marker file next to the executable so the first-run setup works.

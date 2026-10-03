@@ -5,13 +5,14 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import Annotated
 import shutil
 from utils import check_if_first_start
+import sys
 
 if check_if_first_start():
     with open(Path(__file__).resolve().parent / ".CONFIG_ME", "w") as config_file:
         config_file.write("""BASE_URL=https://openrouter.ai/api/v1
 API_KEY=
-MODEL=openai/gpt-5.6-luna
-REASONING=""")
+MODEL=openai/gpt-6-luna
+REASONING=high""")
 
     print("\n" + "=" * shutil.get_terminal_size().columns, end="")
     print("""Welcome to VibeLegacy!
@@ -35,7 +36,7 @@ REASONING=""")
 
     env_folder = Path(__file__).resolve().parent
     os.startfile(env_folder)
-    exit(0)
+    sys.exit(0)
 
 NonEmptyStr = Annotated[str, StringConstraints(min_length=1, strip_whitespace=True)]
 
@@ -55,4 +56,4 @@ except Exception as e:
     print("!!!\n\n\n\n Error in '.CONFIG_ME' file. Pls configure it \n\n\n\n!!!")
     env_folder = Path(__file__).resolve().parent
     os.startfile(env_folder)
-    exit()
+    sys.exit(1)
