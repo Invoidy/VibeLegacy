@@ -30,7 +30,7 @@ cd path/to/your/project
 vibelegacy.exe
 ```
 
-Files are looked up relative to the directory you launched from, so use paths like `src/app.py`.
+Files are looked up relative to the directory you launched from, so use paths like `src/app.py` or `utils.py`.
 
 **Type a request to talk to the model. Anything starting with `/` is a command.**
 
@@ -79,10 +79,6 @@ REASONING=high
 | `API_KEY` | Your API key for that provider. Required. |
 | `MODEL` | Model identifier, in the format your provider expects. |
 | `REASONING` | Reasoning effort (for example `low`, `medium`, `high`), passed to the API as `reasoning.effort`. Leave empty to disable. |
-
-`BASE_URL`, `API_KEY` and `MODEL` must not be empty. If the file is invalid, VibeLegacy tells you and reopens the folder. `.CONFIG_ME` is listed in `.gitignore`, so your key stays out of version control.
-
-> **Note:** the first-run flow opens the folder with `os.startfile`, which is Windows-only. On other systems, create `.CONFIG_ME` manually with the contents above.
 
 ## Installation and build
 
