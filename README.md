@@ -103,7 +103,7 @@ venv\Scripts\activate
 pip install -r requirements.txt
 
 pip install nuitka
-python -m nuitka --standalone --remove-output --output-dir=dist --output-filename=vibelegacy.exe --include-data-files=first_start=first_start main.py
+python -m nuitka --standalone --remove-output --output-dir=dist --output-filename=vibelegacy.exe --include-data-files=first_start=first_start --windows-icon-from-ico=logo.ico main.py
 ```
 
 The result is placed in `dist/main.dist/` (`dist` is already in `.gitignore`), with `vibelegacy.exe` inside. Keep the `first_start` marker file next to the executable so the first-run setup works.
