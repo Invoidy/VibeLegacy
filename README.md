@@ -10,6 +10,7 @@
 
 ![Python 3.14+](https://img.shields.io/badge/python-3.14%2B-blue)
 ![License: GPL v3](https://img.shields.io/badge/license-GPLv3-blue)
+[![Support](https://img.shields.io/badge/support-DonationAlerts-orange)](https://www.donationalerts.com/r/invoidy)
 
 </div>
 
@@ -164,6 +165,10 @@ The tests create a scratch directory at `pytest/polygon/`, which is ignored by g
 **Contributing**
 
 Issues and pull requests are welcome. For larger changes, please open an issue first to discuss what you would like to change, and include or update tests when you touch the parser.
+
+## Support the project
+
+VibeLegacy is free and open source. If it saves you time, you can support its development: https://www.donationalerts.com/r/invoidy
 
 ## License and author
 
