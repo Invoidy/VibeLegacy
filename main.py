@@ -1,4 +1,6 @@
+import os
 import shutil
+from pathlib import Path
 
 import generate
 from utils import find_file_from_project, save_copy_of_files, undo_files
@@ -24,6 +26,10 @@ while True:
 
         if command == "/exit":
             break
+        elif command == "/config":
+            config_folder = Path(__file__).resolve().parent
+            print(config_folder / ".CONFIG_ME")
+            os.startfile(config_folder)
         elif command == "/help":
             print("""
             Commands:
@@ -33,7 +39,8 @@ while True:
               /drop <file>           Remove file(s) from the context
               /dropall               Remove all files from the context
               /clear                 Clear chat history
-              /undo                   Restore files to their state before the last AI request
+              /undo                  Restore files to their state before the last AI request
+              /config                Opens config file's directory
               /exit                  Exit VibeLegacy
 
             Anything without "/" is treated as a request to the AI.
