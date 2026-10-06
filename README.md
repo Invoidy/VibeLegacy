@@ -43,6 +43,7 @@ Files are looked up relative to the directory you launched from, so use paths li
 | `/dropall` | Remove all files from the context |
 | `/clear` | Clear the chat history |
 | `/undo` | Restore files to their state before the last AI request |
+| `/config` | Open the folder where `.CONFIG_ME` is stored |
 | `/exit` | Exit VibeLegacy |
 
 **Input shortcuts**
@@ -65,7 +66,7 @@ Files are looked up relative to the directory you launched from, so use paths li
 
 ## Configuration (`.CONFIG_ME`)
 
-On the very first launch VibeLegacy creates a `.CONFIG_ME` file next to `vibelegacy.exe`, opens the folder, and exits. Fill it in, then start the app again.
+On the very first launch VibeLegacy creates a `.CONFIG_ME` file next to `vibelegacy.exe`, opens the folder, and exits. The config file stays in the folder where VibeLegacy is installed; use `/config` to open that folder later. Fill it in, then restart the app.
 
 ```ini
 BASE_URL=https://openrouter.ai/api/v1
