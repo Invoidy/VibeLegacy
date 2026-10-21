@@ -11,7 +11,7 @@ if check_if_first_start():
     with open(Path(__file__).resolve().parent / ".CONFIG_ME", "w") as config_file:
         config_file.write("""BASE_URL=https://openrouter.ai/api/v1
 API_KEY=
-MODEL=openai/gpt-6-luna
+MODEL=openai/gpt-6.1-sol
 REASONING=high""")
 
     print("\n" + "=" * shutil.get_terminal_size().columns, end="")
