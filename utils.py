@@ -2,6 +2,8 @@ from pathlib import Path
 from models import MyFile
 from state import state
 
+from binaryornot.check import is_binary
+
 
 def generate_files_tree() -> set[MyFile]:
     result = set()
@@ -23,6 +25,9 @@ def find_file_from_project(search: str) -> set[MyFile]:
     for name in search_names:
         for file in file_tree:
             if file.name == name:
+                if is_binary(file.path):
+                    print("Sorry, you cannot add media files yet.")
+                    continue
                 final_set.add(file)
 
     if not final_set:
