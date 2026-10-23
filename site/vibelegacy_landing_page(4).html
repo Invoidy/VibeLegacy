@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VibeLegacy v0.1.1 — A console AI coding assistant with full control</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eefaf6',
+                            100: '#d7f4e8',
+                            400: '#34d399',
+                            500: '#10b981',
+                            600: '#059669',
+                            900: '#064e3b',
+                            accent: '#3b82f6',
+                            purple: '#8b5cf6',
+                            darkBg: '#080c14',
+                            cardBg: 'rgba(15, 23, 42, 0.75)',
+                            terminalBg: '#0d1117'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    animation: {
+                        'pulse-glow': 'pulseGlow 3s infinite ease-in-out',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        pulseGlow: {
+                            '0%, 100%': { opacity: '0.4', filter: 'drop-shadow(0 0 15px rgba(16, 185, 129, 0.3))' },
+                            '50%': { opacity: '0.8', filter: 'drop-shadow(0 0 30px rgba(59, 130, 246, 0.5))' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-6px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #080c14;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #10b981;
+        }
+
+        /* Glassmorphism panels */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-panel-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-panel-hover:hover {
+            border-color: rgba(16, 185, 129, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px -10px rgba(16, 185, 129, 0.15);
+        }
+
+        .glow-border {
+            box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-[#080c14] text-slate-200 font-sans antialiased selection:bg-brand-500 selection:text-slate-950 min-h-screen flex flex-col justify-between">
+
+    <!-- Site header -->
+    <header class="sticky top-0 z-50 glass-panel border-b border-slate-800/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                
+                <!-- >V logo -->
+                <a href="#" class="flex items-center space-x-3 group">
+                    <div class="w-10 h-10 rounded-xl bg-white border border-slate-700 overflow-hidden flex items-center justify-center group-hover:border-brand-500/60 group-hover:shadow-[0_0_14px_rgba(16,185,129,0.45)] transition-all">
+                        <img src="logo.png" alt="VibeLegacy logo" class="w-full h-full object-contain">
+                    </div>
+                    <div>
+                        <span class="font-mono font-bold text-xl tracking-wider text-white group-hover:text-brand-400 transition-colors">VibeLegacy</span>
+                        <span class="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-brand-400 border border-brand-500/30 ml-2 font-mono">v0.1.1</span>
+                    </div>
+                </a>
+
+                <!-- Desktop navigation -->
+                <nav class="hidden md:flex items-center space-x-8 text-sm font-medium">
+                    <a href="#features" class="hover:text-brand-400 transition-colors">Features</a>
+                    <a href="#demo" class="hover:text-brand-400 transition-colors">Demo</a>
+                    <a href="#commands" class="hover:text-brand-400 transition-colors">Commands</a>
+                    <a href="#config" class="hover:text-brand-400 transition-colors">Configuration</a>
+                    <a href="#building" class="hover:text-brand-400 transition-colors">Build</a>
+                    <a href="https://www.donationalerts.com/r/invoidy" target="_blank" rel="noopener noreferrer" class="text-amber-400 hover:text-amber-300 transition-colors flex items-center gap-1.5 font-semibold">
+                        <i class="fa-solid fa-heart text-xs"></i> Support
+                    </a>
+                </nav>
+
+                <!-- Download button -->
+                <div class="hidden sm:flex items-center space-x-4">
+                    <a href="https://github.com/Invoidy/VibeLegacy" target="_blank" rel="noopener noreferrer" class="p-2 text-slate-400 hover:text-white transition-colors" title="GitHub Repository">
+                        <i class="fa-brands fa-github text-xl"></i>
+                    </a>
+                    <button onclick="triggerFileDownload()" class="relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-semibold rounded-xl group bg-gradient-to-br from-brand-500 to-blue-600 group-hover:from-brand-500 group-hover:to-blue-600 hover:text-white text-white focus:outline-none focus:ring-2 focus:ring-brand-500/50 shadow-lg shadow-brand-500/20">
+                        <span class="relative px-4 py-2 transition-all ease-in duration-75 bg-slate-950 rounded-[10px] group-hover:bg-opacity-0 flex items-center gap-2">
+                            <i class="fa-brands fa-windows text-brand-400 group-hover:text-white"></i>
+                            Download v0.1.1 (amd64)
+                        </span>
+                    </button>
+                </div>
+
+                <!-- Mobile menu (hamburger) -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobileMenuBtn" class="text-slate-400 hover:text-white focus:outline-none p-2">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile navigation -->
+        <div id="mobileMenu" class="hidden md:hidden glass-panel border-b border-slate-800 px-4 pt-2 pb-4 space-y-3">
+            <a href="#features" class="block py-2 text-slate-300 hover:text-brand-400">Features</a>
+            <a href="#demo" class="block py-2 text-slate-300 hover:text-brand-400">Demo</a>
+            <a href="#commands" class="block py-2 text-slate-300 hover:text-brand-400">Commands</a>
+            <a href="#config" class="block py-2 text-slate-300 hover:text-brand-400">Configuration</a>
+            <a href="#building" class="block py-2 text-slate-300 hover:text-brand-400">Build</a>
+            <a href="https://www.donationalerts.com/r/invoidy" target="_blank" class="block py-2 text-amber-400 font-bold">Support the project</a>
+            <div class="pt-2 border-t border-slate-800 flex flex-col gap-2">
+                <button onclick="triggerFileDownload()" class="w-full py-2.5 bg-brand-500 text-slate-950 font-bold rounded-xl flex items-center justify-center gap-2">
+                    <i class="fa-brands fa-windows"></i> Download v0.1.1 (Windows amd64)
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        <!-- Hero -->
+        <section class="relative pt-12 pb-14 md:pt-20 md:pb-20 overflow-hidden">
+            <!-- Background glow -->
+            <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-brand-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="text-center max-w-3xl mx-auto">
+                    
+                                        <!-- Title and tagline -->
+                    <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight text-white mb-3">
+                        VibeLegacy
+                    </h1>
+                    
+                    <p class="text-2xl sm:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-brand-400 via-emerald-300 to-blue-500 mb-6 font-mono">
+                        "Vibe with control."
+                    </p>
+
+                    <p class="text-slate-300 text-base sm:text-lg leading-relaxed mb-8 max-w-2xl mx-auto">
+                        A console AI coding assistant that edits your files using compact <span class="text-brand-400 font-mono font-semibold">SEARCH/REPLACE</span>. You decide what context the model sees, and the most recent change can be instantly undone with <span class="text-blue-400 font-mono font-semibold">/undo</span>.
+                    </p>
+
+                    <!-- Action buttons -->
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
+                        <button onclick="triggerFileDownload()" class="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-brand-500 to-emerald-600 hover:from-brand-400 hover:to-emerald-500 text-slate-950 font-extrabold rounded-xl shadow-lg shadow-brand-500/25 flex items-center justify-center gap-3 transition-all transform hover:-translate-y-0.5 text-base">
+                            <i class="fa-brands fa-windows text-xl"></i>
+                            <span>Download v0.1.1 (Windows amd64)</span>
+                        </button>
+
+                        <a href="https://github.com/Invoidy/VibeLegacy" target="_blank" class="w-full sm:w-auto px-6 py-4 glass-panel hover:bg-slate-800/80 text-white font-medium rounded-xl flex items-center justify-center gap-2 border border-slate-700 transition-all text-base">
+                            <i class="fa-brands fa-github text-xl"></i>
+                            <span>Source code on GitHub</span>
+                        </a>
+                    </div>
+
+                    <!-- Meta tags -->
+                    <div class="flex flex-wrap items-center justify-center gap-3 text-xs font-mono text-slate-400">
+                        <span class="px-3 py-1.5 rounded-lg bg-slate-900/80 border border-slate-800 flex items-center gap-1.5">
+                            <i class="fa-brands fa-python text-blue-400"></i> Python 3.14+
+                        </span>
+                        <span class="px-3 py-1.5 rounded-lg bg-slate-900/80 border border-slate-800 flex items-center gap-1.5">
+                            <i class="fa-solid fa-scale-balanced text-emerald-400"></i> GPL v3 License
+                        </span>
+                        <span class="px-3 py-1.5 rounded-lg bg-slate-900/80 border border-slate-800 flex items-center gap-1.5">
+                            <i class="fa-solid fa-microchip text-purple-400"></i> Windows amd64 .exe
+                        </span>
+                        <span class="px-3 py-1.5 rounded-lg bg-slate-900/80 border border-slate-800 flex items-center gap-1.5">
+                            <i class="fa-solid fa-bolt text-amber-400"></i> OpenRouter &amp; OpenAI support
+                        </span>
+                    </div>
+
+                </div>
+
+
+            </div>
+        </section>
+
+        <!-- Demo section -->
+        <section id="demo" class="py-16 md:py-24 border-t border-slate-800/60 relative overflow-hidden scroll-mt-16">
+            <!-- Background glow -->
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-brand-500/10 rounded-full blur-[130px] pointer-events-none"></div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="text-center max-w-2xl mx-auto mb-10">
+                    <h2 class="text-xs font-mono font-bold tracking-widest text-brand-400 uppercase mb-2">See it in action</h2>
+                    <p class="text-3xl font-extrabold text-white sm:text-4xl">VibeLegacy at work</p>
+                    <p class="mt-3 text-slate-400 text-base">Add files to the context, describe the task, and review compact SEARCH/REPLACE edits — right from your terminal.</p>
+                </div>
+
+                <div class="max-w-5xl mx-auto glass-panel rounded-2xl p-2 sm:p-3 border border-slate-800 glow-border">
+                    <video id="demoVideo" class="block w-full aspect-video rounded-xl bg-black pointer-events-none select-none" autoplay muted loop playsinline disablepictureinpicture disableremoteplayback preload="auto" poster="demo_poster.jpg">
+                        <source src="demo.mp4" type="video/mp4">
+                        Your browser does not support HTML5 video. <a href="demo.mp4" class="text-brand-400 underline">Download the demo</a> instead.
+                    </video>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features section -->
+        <section id="features" class="py-16 md:py-24 bg-slate-950/50 border-t border-slate-800/60 relative">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <div class="text-center max-w-2xl mx-auto mb-16">
+                    <h2 class="text-xs font-mono font-bold tracking-widest text-brand-400 uppercase mb-2">Built for speed and precision</h2>
+                    <p class="text-3xl font-extrabold text-white sm:text-4xl">Why developers choose VibeLegacy</p>
+                    <p class="mt-3 text-slate-400 text-base">No heavy plugins or autopilots — just a fast console interface and full control over every file.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    
+                    <!-- Card 1 -->
+                    <div class="glass-panel p-6 rounded-2xl glass-panel-hover flex flex-col justify-between">
+                        <div>
+                            <div class="w-12 h-12 rounded-xl bg-brand-500/10 border border-brand-500/30 text-brand-400 flex items-center justify-center text-xl mb-5">
+                                ⚡
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-2">Instant startup</h3>
+                            <p class="text-slate-400 text-sm leading-relaxed">
+                                Starts in a fraction of a second right from the console in your project folder. Minimal memory footprint, no background processes.
+                            </p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-slate-800/80 font-mono text-xs text-brand-400">
+                            Run from cmd / PowerShell
+                        </div>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="glass-panel p-6 rounded-2xl glass-panel-hover flex flex-col justify-between">
+                        <div>
+                            <div class="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/30 text-blue-400 flex items-center justify-center text-xl mb-5">
+                                💰
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-2">Token savings</h3>
+                            <p class="text-slate-400 text-sm leading-relaxed">
+                                The model sends targeted SEARCH/REPLACE blocks instead of rewriting the whole file, which saves API tokens.
+                            </p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-slate-800/80 font-mono text-xs text-blue-400">
+                            Minimal token usage per edit
+                        </div>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="glass-panel p-6 rounded-2xl glass-panel-hover flex flex-col justify-between">
+                        <div>
+                            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center text-xl mb-5">
+                                🛡️
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-2">Full control and /undo</h3>
+                            <p class="text-slate-400 text-sm leading-relaxed">
+                                You choose which files the AI can access using <code class="text-emerald-400 font-mono">/add</code>. The <code class="text-emerald-400 font-mono">/undo</code> command restores your files to their original state.
+                            </p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-slate-800/80 font-mono text-xs text-emerald-400">
+                            Instant rollback with one command
+                        </div>
+                    </div>
+
+                    <!-- Card 4 -->
+                    <div class="glass-panel p-6 rounded-2xl glass-panel-hover flex flex-col justify-between">
+                        <div>
+                            <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-400 flex items-center justify-center text-xl mb-5">
+                                🔌
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-2">Any OpenAI-compatible API</h3>
+                            <p class="text-slate-400 text-sm leading-relaxed">
+                                Works with any provider: OpenRouter (default), OpenAI, DeepSeek, or local models via Ollama or vLLM.
+                            </p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-slate-800/80 font-mono text-xs text-purple-400">
+                            Configurable base_url and reasoning effort
+                        </div>
+                    </div>
+
+                    <!-- Card 5 -->
+                    <div class="glass-panel p-6 rounded-2xl glass-panel-hover flex flex-col justify-between">
+                        <div>
+                            <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center text-xl mb-5">
+                                ⌨️
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-2">Comfortable input</h3>
+                            <p class="text-slate-400 text-sm leading-relaxed">
+                                Multi-line messages with <code class="text-amber-400 font-mono">Shift+Enter</code>, stop generation with <code class="text-amber-400 font-mono">Ctrl+C</code> and paste with right-click.
+                            </p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-slate-800/80 font-mono text-xs text-amber-400">
+                            Powered by prompt_toolkit
+                        </div>
+                    </div>
+
+                    <!-- Card 6 -->
+                    <div class="glass-panel p-6 rounded-2xl glass-panel-hover flex flex-col justify-between">
+                        <div>
+                            <div class="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 flex items-center justify-center text-xl mb-5">
+                                📦
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-2">Ready-to-run .exe binary</h3>
+                            <p class="text-slate-400 text-sm leading-relaxed">
+                                Compiled with Nuitka into a standalone Windows amd64 executable. No Python installation required.
+                            </p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-slate-800/80 font-mono text-xs text-cyan-400">
+                            Windows amd64 / x64
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Commands and shortcuts section -->
+        <section id="commands" class="py-16 md:py-24 relative">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+                    <div>
+                        <h2 class="text-xs font-mono font-bold tracking-widest text-brand-400 uppercase mb-2">CLI reference</h2>
+                        <h3 class="text-3xl font-extrabold text-white">Commands &amp; shortcuts</h3>
+                    </div>
+                    
+                    <!-- Command search -->
+                    <div class="relative w-full md:w-72">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
+                        <input type="text" id="commandSearch" placeholder="Search commands..." oninput="filterCommands()" class="w-full pl-10 pr-4 py-2 bg-slate-900 border border-slate-800 rounded-xl text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-colors font-mono">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Commands table -->
+                    <div class="lg:col-span-2 glass-panel rounded-2xl overflow-hidden border border-slate-800">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left font-mono text-sm">
+                                <thead class="bg-slate-900/80 text-xs text-slate-400 uppercase border-b border-slate-800">
+                                    <tr>
+                                        <th class="px-6 py-4">Command</th>
+                                        <th class="px-6 py-4">Description</th>
+                                        <th class="px-4 py-4 text-right">Copy</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="commandsTableBody" class="divide-y divide-slate-800/60">
+                                    <!-- Filled dynamically via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Keyboard shortcuts -->
+                    <div class="glass-panel p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
+                        <div>
+                            <h4 class="text-lg font-bold text-white mb-4 flex items-center gap-2 font-mono">
+                                <i class="fa-solid fa-keyboard text-brand-400"></i> Keyboard shortcuts
+                            </h4>
+                            <div class="space-y-3 font-mono text-xs">
+                                <div class="flex items-center justify-between p-3 rounded-xl bg-slate-900/60 border border-slate-800/80">
+                                    <span class="text-slate-400">Send request</span>
+                                    <kbd class="px-2.5 py-1 bg-slate-800 rounded text-brand-400 font-bold border border-slate-700">Enter</kbd>
+                                </div>
+                                <div class="flex items-center justify-between p-3 rounded-xl bg-slate-900/60 border border-slate-800/80">
+                                    <span class="text-slate-400">New line</span>
+                                    <div class="flex gap-1">
+                                        <kbd class="px-1.5 py-0.5 bg-slate-800 rounded text-slate-300 border border-slate-700">Shift</kbd>+<kbd class="px-1.5 py-0.5 bg-slate-800 rounded text-slate-300 border border-slate-700">Enter</kbd>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between p-3 rounded-xl bg-slate-900/60 border border-slate-800/80">
+                                    <span class="text-slate-400">Stop generation</span>
+                                    <kbd class="px-2 py-1 bg-slate-800 rounded text-red-400 font-bold border border-slate-700">Ctrl+C</kbd>
+                                </div>
+                                <div class="flex items-center justify-between p-3 rounded-xl bg-slate-900/60 border border-slate-800/80">
+                                    <span class="text-slate-400">Paste from clipboard</span>
+                                    <kbd class="px-2 py-1 bg-slate-800 rounded text-blue-400 font-bold border border-slate-700">Right-click</kbd>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 p-4 rounded-xl bg-brand-500/10 border border-brand-500/20 text-xs text-slate-300">
+                            <p><strong class="text-brand-400">Tip:</strong> Use file paths relative to the launch directory (e.g., <code class="text-white">/add src/app.py utils.py</code>).</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Configuration section (.CONFIG_ME) -->
+        <section id="config" class="py-16 md:py-24 bg-slate-950/50 border-t border-slate-800/60">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+                    <div>
+                        <h2 class="text-xs font-mono font-bold tracking-widest text-brand-400 uppercase mb-2">Application setup</h2>
+                        <h3 class="text-3xl font-extrabold text-white mb-4">Configuring <code class="text-brand-400">.CONFIG_ME</code></h3>
+                        
+                        <p class="text-slate-300 text-sm sm:text-base leading-relaxed mb-6">
+                            On the very first launch, <code class="text-white font-mono">vibelegacy.exe</code> automatically creates a template file named <code class="text-brand-400 font-mono">.CONFIG_ME</code> next to the executable, opens the folder in Explorer, and exits.
+                        </p>
+
+                        <div class="space-y-4 font-mono text-xs mb-6">
+                            <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 flex items-start gap-3">
+                                <div class="text-brand-400 font-bold text-sm bg-brand-500/10 w-6 h-6 rounded-full flex items-center justify-center shrink-0">1</div>
+                                <div>
+                                    <strong class="text-white text-sm block mb-1">Fill in your keys</strong>
+                                    Open <code class="text-brand-400">.CONFIG_ME</code> in any text editor and set your <code class="text-slate-200">API_KEY</code>.
+                                </div>
+                            </div>
+
+                            <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 flex items-start gap-3">
+                                <div class="text-brand-400 font-bold text-sm bg-brand-500/10 w-6 h-6 rounded-full flex items-center justify-center shrink-0">2</div>
+                                <div>
+                                    <strong class="text-white text-sm block mb-1">Run it again</strong>
+                                    Save the file and run <code class="text-white">vibelegacy.exe</code> again. The app is ready to go!
+                                </div>
+                            </div>
+
+                            <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 flex items-start gap-3">
+                                <div class="text-brand-400 font-bold text-sm bg-brand-500/10 w-6 h-6 rounded-full flex items-center justify-center shrink-0">3</div>
+                                <div>
+                                    <strong class="text-white text-sm block mb-1">The /config command</strong>
+                                    At any time, type <code class="text-emerald-400">/config</code> to quickly open the folder containing the config file.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ready-made config example with a copy button -->
+                    <div class="glass-panel p-6 rounded-2xl border border-slate-800">
+                        <div class="flex items-center justify-between mb-4 border-b border-slate-800 pb-3">
+                            <span class="font-mono text-sm font-bold text-slate-200 flex items-center gap-2">
+                                <i class="fa-solid fa-file-code text-brand-400"></i> Example .CONFIG_ME file
+                            </span>
+                            <button onclick="copyConfigExample()" class="px-3 py-1.5 bg-brand-500/20 hover:bg-brand-500/30 text-brand-400 rounded-lg text-xs font-mono font-semibold transition-colors flex items-center gap-1.5">
+                                <i class="fa-regular fa-copy"></i> Copy example
+                            </button>
+                        </div>
+
+                        <!-- Example code -->
+                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 font-mono text-xs text-emerald-400 overflow-x-auto leading-relaxed mb-6">
+                            <pre id="configExampleText">BASE_URL=https://openrouter.ai/api/v1
+API_KEY=your_api_key_here
+MODEL=openai/gpt-6.1-sol
+REASONING=high</pre>
+                        </div>
+
+                        <!-- Parameter descriptions -->
+                        <div class="space-y-3 font-mono text-xs">
+                            <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-800/80">
+                                <span class="text-brand-400 font-bold">BASE_URL:</span>
+                                <span class="text-slate-400">URL of any OpenAI-compatible API (OpenRouter by default).</span>
+                            </div>
+                            <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-800/80">
+                                <span class="text-brand-400 font-bold">API_KEY:</span>
+                                <span class="text-slate-400">Your personal API key from the provider.</span>
+                            </div>
+                            <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-800/80">
+                                <span class="text-brand-400 font-bold">MODEL:</span>
+                                <span class="text-slate-400">Model identifier (e.g. <code class="text-slate-200">openai/gpt-6.1-sol</code> or <code class="text-slate-200">deepseek/deepseek-v4.1-flash-1017</code>).</span>
+                            </div>
+                            <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-800/80">
+                                <span class="text-brand-400 font-bold">REASONING:</span>
+                                <span class="text-slate-400">Reasoning level (<code class="text-slate-200">none</code>, <code class="text-slate-200">low</code>, <code class="text-slate-200">medium</code>, <code class="text-slate-200">high</code>, <code class="text-slate-200">xhigh</code>, <code class="text-slate-200">max</code>) or leave empty.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Build-from-source section (Nuitka) -->
+        <section id="building" class="py-16 md:py-24 relative">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <div class="text-center max-w-2xl mx-auto mb-12">
+                    <h2 class="text-xs font-mono font-bold tracking-widest text-brand-400 uppercase mb-2">Development</h2>
+                    <h3 class="text-3xl font-extrabold text-white">Building the .exe with Nuitka</h3>
+                    <p class="mt-3 text-slate-400 text-sm">You can compile VibeLegacy yourself into a standalone Windows executable using the Nuitka compiler.</p>
+                </div>
+
+                <div class="max-w-3xl mx-auto glass-panel p-6 rounded-2xl border border-slate-800">
+                    <div class="flex items-center justify-between mb-4 pb-2 border-b border-slate-800">
+                        <span class="font-mono text-xs text-slate-400 flex items-center gap-2">
+                            <i class="fa-solid fa-terminal text-brand-400"></i> PowerShell / CMD build commands
+                        </span>
+                        <button onclick="copyBuildScript()" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-xs font-mono transition-colors flex items-center gap-1.5">
+                            <i class="fa-regular fa-copy"></i> Copy
+                        </button>
+                    </div>
+
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 font-mono text-xs text-slate-300 overflow-x-auto leading-relaxed">
+                        <pre id="buildScriptText"><span class="text-slate-500"># 1. Clone the repository</span>
+git clone https://github.com/Invoidy/VibeLegacy.git
+cd VibeLegacy
+
+<span class="text-slate-500"># 2. Create and activate a Python 3.14+ virtual environment</span>
+python -m venv venv
+venv\Scripts\activate
+
+<span class="text-slate-500"># 3. Install dependencies</span>
+pip install -r requirements.txt
+pip install nuitka
+
+<span class="text-slate-500"># 4. Build the .exe executable</span>
+python -m nuitka --standalone --remove-output --output-dir=dist --output-filename=vibelegacy.exe --include-data-files=first_start=first_start --windows-icon-from-ico=logo.ico main.py</pre>
+                    </div>
+
+                    <p class="text-xs text-slate-400 mt-4 font-mono">
+                        <i class="fa-solid fa-circle-check text-brand-400 mr-1"></i> The build output will appear in <code class="text-slate-200">dist/main.dist/vibelegacy.exe</code>.
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Project support section (DonationAlerts) -->
+        <section class="py-16 bg-gradient-to-br from-brand-900/30 via-slate-950 to-slate-900 border-t border-slate-800">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <div class="max-w-2xl mx-auto">
+                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 text-2xl mb-4">
+                        <i class="fa-solid fa-heart"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-2">Support development</h3>
+                    <p class="text-slate-300 text-sm mb-6 leading-relaxed">
+                        VibeLegacy is free, open-source software licensed under GPL v3.0. If the tool helps your development workflow, you can support the author!
+                    </p>
+                    
+                    <a href="https://www.donationalerts.com/r/invoidy" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-slate-950 font-extrabold rounded-xl shadow-lg shadow-amber-500/20 transition-all transform hover:-translate-y-0.5 text-base">
+                        <i class="fa-solid fa-hand-holding-dollar text-xl"></i>
+                        <span>Support via DonationAlerts</span>
+                    </a>
+
+                    <p class="text-xs text-slate-500 mt-4 font-mono">
+                        Project author: <strong class="text-slate-300">@Invoidy</strong>
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 border-t border-slate-800 py-12 text-slate-400 text-xs font-mono">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="flex items-center space-x-3">
+                    <span class="text-brand-400 font-bold text-base">&gt;_ VibeLegacy</span>
+                    <span class="text-slate-600">|</span>
+                    <span>Developed by <a href="https://github.com/Invoidy" target="_blank" class="text-slate-200 hover:text-brand-400 underline">@Invoidy</a></span>
+                </div>
+
+                <div class="flex items-center space-x-6">
+                    <a href="https://github.com/Invoidy/VibeLegacy" target="_blank" class="hover:text-white transition-colors">
+                        <i class="fa-brands fa-github text-base mr-1"></i> GitHub Repository
+                    </a>
+                    <a href="https://github.com/Invoidy/VibeLegacy/blob/main/LICENSE" target="_blank" class="hover:text-white transition-colors">
+                        <i class="fa-solid fa-scale-balanced text-base mr-1"></i> GPL v3 License
+                    </a>
+                </div>
+            </div>
+
+            <div class="mt-8 pt-6 border-t border-slate-900 text-center text-slate-600">
+                <p>VibeLegacy v0.1.1 (Windows amd64) • Vibe with control.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Download modal -->
+    <div id="downloadModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+        <div class="glass-panel max-w-lg w-full rounded-2xl border border-slate-800 shadow-2xl p-6 relative animate-float">
+            <button onclick="closeDownloadModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-xl bg-white border border-slate-700 overflow-hidden flex items-center justify-center">
+                    <img src="logo.png" alt="VibeLegacy logo" class="w-full h-full object-contain">
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-white">VibeLegacy v0.1.1</h3>
+                    <p class="text-xs text-slate-400 font-mono">Architecture: Windows amd64 (x64)</p>
+                </div>
+            </div>
+
+            <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 text-xs text-slate-300 space-y-3 font-mono mb-6">
+                <div class="flex justify-between text-slate-400 pb-2 border-b border-slate-800">
+                    <span>Package:</span> <span class="text-white">vibelegacy-v0.1.1-win-amd64.zip</span>
+                </div>
+                <div class="flex justify-between text-slate-400 pb-2 border-b border-slate-800">
+                    <span>Files:</span> <span class="text-white">vibelegacy.exe, first_start marker</span>
+                </div>
+                <div class="flex justify-between text-slate-400">
+                    <span>Platform:</span> <span class="text-brand-400">Windows 10 / 11 64-bit</span>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <button onclick="triggerFileDownload()" class="w-full py-3 bg-gradient-to-r from-brand-500 to-emerald-600 hover:from-brand-400 hover:to-emerald-500 text-slate-950 font-bold rounded-xl shadow-lg shadow-brand-500/20 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-download"></i> Download package (.ZIP)
+                </button>
+                <a href="https://github.com/Invoidy/VibeLegacy/releases" target="_blank" class="block text-center text-xs text-slate-400 hover:text-brand-400 font-mono py-1">
+                    Or go to the release on GitHub <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast notification -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 hidden glass-panel px-4 py-3 rounded-xl border border-brand-500/40 text-brand-400 text-xs font-mono flex items-center gap-2 shadow-2xl">
+        <i class="fa-solid fa-check-circle text-base"></i>
+        <span id="toastMsg">Copied to clipboard!</span>
+    </div>
+
+    <!-- JavaScript logic -->
+    <script>
+        // VibeLegacy command list
+        const commandsList = [
+            { cmd: '/help', desc: 'Show the help message listing all available commands' },
+            { cmd: '/add <path>', desc: 'Add file(s) to the AI context (several can be listed, separated by spaces)' },
+            { cmd: '/drop <path>', desc: 'Remove the specified file(s) from the context' },
+            { cmd: '/dropall', desc: 'Clear all attached file context' },
+            { cmd: '/clear', desc: 'Clear the conversation history with the model' },
+            { cmd: '/undo', desc: 'Instantly restore files to their state before the last request' },
+            { cmd: '/config', desc: 'Open the folder containing the .CONFIG_ME configuration file' },
+            { cmd: '/exit', desc: 'Exit VibeLegacy' }
+        ];
+
+        // Render the commands table
+        function escapeHtml(s) {
+            return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        function renderCommands(filter = '') {
+            const tbody = document.getElementById('commandsTableBody');
+            tbody.innerHTML = '';
+
+            const filtered = commandsList.filter(c => 
+                c.cmd.toLowerCase().includes(filter.toLowerCase()) || 
+                c.desc.toLowerCase().includes(filter.toLowerCase())
+            );
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="3" class="px-6 py-6 text-center text-slate-500 font-mono">No commands found</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-900/50 transition-colors';
+                tr.innerHTML = `
+                    <td class="px-6 py-4 text-brand-400 font-bold whitespace-nowrap">${escapeHtml(item.cmd)}</td>
+                    <td class="px-6 py-4 text-slate-300 text-xs font-sans">${item.desc}</td>
+                    <td class="px-4 py-4 text-right whitespace-nowrap">
+                        <button onclick="copyToClipboard('${item.cmd.split(' ')[0]}')" class="p-1.5 text-slate-400 hover:text-brand-400 transition-colors" title="Copy command">
+                            <i class="fa-regular fa-copy"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filterCommands() {
+            const val = document.getElementById('commandSearch').value;
+            renderCommands(val);
+        }
+
+        function copyConfigExample() {
+            const text = document.getElementById('configExampleText').textContent;
+            copyToClipboard(text, 'Example config copied!');
+        }
+
+        function copyBuildScript() {
+            const text = document.getElementById('buildScriptText').textContent;
+            copyToClipboard(text, 'Build script copied!');
+        }
+
+        function copyToClipboard(text, customMessage = 'Copied to clipboard!') {
+            const dummy = document.createElement('textarea');
+            document.body.appendChild(dummy);
+            dummy.value = text;
+            dummy.select();
+            document.execCommand('copy');
+            document.body.removeChild(dummy);
+
+            showToast(customMessage);
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            toastMsg.textContent = msg;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+
+        function openDownloadModal() {
+            document.getElementById('downloadModal').classList.remove('hidden');
+        }
+
+        function closeDownloadModal() {
+            document.getElementById('downloadModal').classList.add('hidden');
+        }
+
+        function triggerFileDownload() {
+            window.location.href = 'https://github.com/Invoidy/VibeLegacy/releases/download/0.1.1/VibeLegacy-Setup-0.1.1.exe';
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderCommands();
+
+            // Mobile menu toggle
+            document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+                document.getElementById('mobileMenu').classList.toggle('hidden');
+            });
+        });
+    </script>
+</body>
+</html>
