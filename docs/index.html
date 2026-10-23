@@ -551,7 +551,7 @@ pip install -r requirements.txt
 pip install nuitka
 
 <span class="text-slate-500"># 4. Build the .exe executable</span>
-python -m nuitka --standalone --remove-output --output-dir=dist --output-filename=vibelegacy.exe --include-data-files=first_start=first_start --windows-icon-from-ico=logo.ico main.py</pre>
+python -m nuitka --standalone --remove-output --output-dir=dist --output-filename=vibelegacy.exe --windows-icon-from-ico=logo.ico --include-package-data=binaryornot --include-data-files=first_start=first_start main.py</pre>
                     </div>
 
                     <p class="text-xs text-slate-400 mt-4 font-mono">
