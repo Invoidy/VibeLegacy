@@ -73,8 +73,11 @@ def append_redo_stack():
     final_set = set()
 
     for fileBackup in state.undo_stack[-1]:
-        with open(fileBackup.my_file.path, "r+", encoding="UTF-8") as f:
-            final_set.add(FileBackup(fileBackup.my_file, f.read()))
+        try:
+            with open(fileBackup.my_file.path, "r", encoding="UTF-8") as f:
+                final_set.add(FileBackup(fileBackup.my_file, f.read()))
+        except FileNotFoundError:
+            pass
 
     state.redo_stack.append(final_set)
 
@@ -86,7 +89,7 @@ def redo_files():  # REDO
     append_undo_stack()
 
     for fileBackup in state.redo_stack[-1]:
-        with open(fileBackup.my_file.path, "w", encoding="UTF-8") as f:
+        with open(fileBackup.my_file.path, "w+", encoding="UTF-8") as f:
             f.write(fileBackup.code)
 
     state.redo_stack.pop()
@@ -95,8 +98,11 @@ def append_undo_stack():
     final_set = set()
 
     for fileBackup in state.redo_stack[-1]:
-        with open(fileBackup.my_file.path, "r+", encoding="UTF-8") as f:
-            final_set.add(FileBackup(fileBackup.my_file, f.read()))
+        try:
+            with open(fileBackup.my_file.path, "r", encoding="UTF-8") as f:
+                final_set.add(FileBackup(fileBackup.my_file, f.read()))
+        except FileNotFoundError:
+            pass
 
     state.undo_stack.append(final_set)
 
