@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 
-from models import MyFile
+from models import MyFile, FileBackup
 
 
 @dataclass
@@ -9,6 +9,7 @@ class State:
     is_code_generating: bool = False
     chat_history: list[dict] = field(default_factory=list)
 
-    unedited_added_files: dict[str, str] = field(default_factory=dict)
+    undo_stack: list[set[FileBackup]] = field(default_factory=list)
+    redo_stack: list[set[FileBackup]] = field(default_factory=list)
 
 state: State = State()

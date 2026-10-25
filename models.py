@@ -5,3 +5,8 @@ from pathlib import Path
 class MyFile:
     path: Path
     name: str
+
+@dataclass(frozen=True)
+class FileBackup:
+    my_file: MyFile
+    code: str

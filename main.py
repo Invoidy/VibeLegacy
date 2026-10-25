@@ -3,7 +3,7 @@ import shutil
 from pathlib import Path
 
 import generate
-from utils import find_file_from_project, save_copy_of_files, undo_files
+from utils import find_file_from_project, undo_files, redo_files
 import ui
 from state import state
 from multiline_input import multiline_input
@@ -19,7 +19,6 @@ while True:
             continue
 
         if not command.startswith("/"):
-            save_copy_of_files()
             generate.run_generation(command)
             ui.draw_menu()
             continue
@@ -39,7 +38,8 @@ while True:
               /drop <file>           Remove file(s) from the context
               /dropall               Remove all files from the context
               /clear                 Clear chat history
-              /undo                  Restore files to their state before the last AI request
+              /undo                  Undo AI edits, one step at a time
+              /redo                  Redo what /undo reverted, including your manual edits
               /config                Opens config file's directory
               /exit                  Exit VibeLegacy
 
@@ -59,6 +59,8 @@ while True:
             state.chat_history.clear()
         elif command == "/undo":
             undo_files()
+        elif command == "/redo":
+            redo_files()
 
         else:
             print(f"Unknown command. Try '/help' for more information.")

@@ -15,6 +15,8 @@
 from state import state
 from dataclasses import dataclass, field
 
+from utils import save_copy_of_files
+
 FILE_LABEL = "File: "
 SEARCH_MARKER = "\n<<<<<<< SEARCH\n"
 DIVIDER_MARKER = "\n=======\n"
@@ -28,6 +30,8 @@ class Errors:
 def do_changes(response: str) -> Errors:
     edited_response = response
     errors = Errors()
+
+    save_copy_of_files(response)
 
     while True:
         try:
