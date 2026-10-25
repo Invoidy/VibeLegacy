@@ -38,7 +38,7 @@ def find_file_from_project(search: str) -> set[MyFile]:
     return final_set
 
 
-def save_copy_of_files(response: str):  # AI EDIT
+def save_copy_of_files(response: str):  # on AI EDIT
     state.redo_stack.clear()
 
     find_starts = response.split(FILE_LABEL)
@@ -51,7 +51,8 @@ def save_copy_of_files(response: str):  # AI EDIT
             with open(myFile.path, "r", encoding="UTF-8") as f:
                 final_set.add(FileBackup(myFile, f.read()))
 
-    state.undo_stack.append(final_set)
+    if final_set:
+        state.undo_stack.append(final_set)
 
 
 def undo_files():  # UNDO
@@ -77,17 +78,6 @@ def append_redo_stack():
 
     state.redo_stack.append(final_set)
 
-
-def append_undo_stack():
-    final_set = set()
-
-    for fileBackup in state.redo_stack[-1]:
-        with open(fileBackup.my_file.path, "r+", encoding="UTF-8") as f:
-            final_set.add(FileBackup(fileBackup.my_file, f.read()))
-
-    state.undo_stack.append(final_set)
-
-
 def redo_files():  # REDO
     if not state.redo_stack:
         print("Nothing to redo")
@@ -100,6 +90,16 @@ def redo_files():  # REDO
             f.write(fileBackup.code)
 
     state.redo_stack.pop()
+
+def append_undo_stack():
+    final_set = set()
+
+    for fileBackup in state.redo_stack[-1]:
+        with open(fileBackup.my_file.path, "r+", encoding="UTF-8") as f:
+            final_set.add(FileBackup(fileBackup.my_file, f.read()))
+
+    state.undo_stack.append(final_set)
+
 
 
 def check_if_first_start():
