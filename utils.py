@@ -44,67 +44,53 @@ def save_copy_of_files(response: str):  # on AI EDIT
     find_starts = response.split(FILE_LABEL)
     files_to_save = set([file[:file.find("\n")] for file in find_starts])
 
-    final_set = set()
+    backups = set()
+    for my_file in state.files_context:
+        if my_file.name in files_to_save:
+            try:
+                with open(my_file.path, "r", encoding="UTF-8", newline="") as f:
+                    backups.add(FileBackup(my_file, f.read()))
+            except (OSError, UnicodeDecodeError):
+                continue
 
-    for myFile in state.files_context:
-        if myFile.name in files_to_save:
-            with open(myFile.path, "r", encoding="UTF-8") as f:
-                final_set.add(FileBackup(myFile, f.read()))
-
-    if final_set:
-        state.undo_stack.append(final_set)
+    if backups:
+        state.undo_stack.append(backups)
 
 
-def undo_files():  # UNDO
+def _snapshot(backups: set[FileBackup]) -> set[FileBackup]:
+    snap = set()
+    for b in backups:
+        try:
+            with open(b.my_file.path, "r", encoding="UTF-8", newline="") as f:
+                snap.add(FileBackup(b.my_file, f.read()))
+        except FileNotFoundError:
+            pass
+    return snap
+
+
+def _restore(backups: set[FileBackup]) -> None:
+    for b in backups:
+        b.my_file.path.parent.mkdir(parents=True, exist_ok=True)
+        with open(b.my_file.path, "w", encoding="UTF-8", newline="") as f:
+            f.write(b.code)
+
+
+def undo_files() -> None:
     if not state.undo_stack:
         print("Nothing to undo")
         return
-
-    append_redo_stack()
-
-    for fileBackup in state.undo_stack[-1]:
-        with open(fileBackup.my_file.path, "w+", encoding="UTF-8") as f:
-            f.write(fileBackup.code)
-
-    state.undo_stack.pop()
+    backups = state.undo_stack.pop()
+    state.redo_stack.append(_snapshot(backups))
+    _restore(backups)
 
 
-def append_redo_stack():
-    final_set = set()
-
-    for fileBackup in state.undo_stack[-1]:
-        try:
-            with open(fileBackup.my_file.path, "r", encoding="UTF-8") as f:
-                final_set.add(FileBackup(fileBackup.my_file, f.read()))
-        except FileNotFoundError:
-            pass
-
-    state.redo_stack.append(final_set)
-
-def redo_files():  # REDO
+def redo_files() -> None:
     if not state.redo_stack:
         print("Nothing to redo")
         return
-
-    append_undo_stack()
-
-    for fileBackup in state.redo_stack[-1]:
-        with open(fileBackup.my_file.path, "w+", encoding="UTF-8") as f:
-            f.write(fileBackup.code)
-
-    state.redo_stack.pop()
-
-def append_undo_stack():
-    final_set = set()
-
-    for fileBackup in state.redo_stack[-1]:
-        try:
-            with open(fileBackup.my_file.path, "r", encoding="UTF-8") as f:
-                final_set.add(FileBackup(fileBackup.my_file, f.read()))
-        except FileNotFoundError:
-            pass
-
-    state.undo_stack.append(final_set)
+    backups = state.redo_stack.pop()
+    state.undo_stack.append(_snapshot(backups))
+    _restore(backups)
 
 
 
