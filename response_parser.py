@@ -11,11 +11,9 @@
 # >>>>>>> REPLACE
 # ```
 #
-
+from models import MyFile
 from state import state
 from dataclasses import dataclass, field
-
-from utils import save_copy_of_files
 
 FILE_LABEL = "File: "
 SEARCH_MARKER = "\n<<<<<<< SEARCH\n"
@@ -23,15 +21,14 @@ DIVIDER_MARKER = "\n=======\n"
 REPLACE_MARKER = "\n>>>>>>> REPLACE"
 
 @dataclass
-class Errors:
+class Status:
     error_replaces: list = field(default_factory=list)
     error_index: int = 0
+    success_files: set[MyFile] = field(default_factory=set)
 
-def do_changes(response: str) -> Errors:
+def do_changes(response: str) -> Status:
     edited_response = response
-    errors = Errors()
-
-    save_copy_of_files(response)
+    status = Status()
 
     while True:
         try:
@@ -39,9 +36,8 @@ def do_changes(response: str) -> Errors:
 
             if find_file == -1:
 
-                if len(errors.error_replaces) > 0:
-                    print(f"Formatting errors have been detected in the blocks {errors.error_replaces}. Tip: You can ask the model to rewrite them OR type /undo to undo changes.")
-
+                if len(status.error_replaces) > 0:
+                    print(f"Formatting errors have been detected in the blocks {status.error_replaces}. Tip: You can ask the model to rewrite them OR type /undo to undo changes.")
                 break
             else:
                 find_search = edited_response.find(SEARCH_MARKER, find_file)
@@ -60,15 +56,15 @@ def do_changes(response: str) -> Errors:
 
                 edited_response = edited_response[find_replace + len(REPLACE_MARKER):]
 
-                edit_file(file_name, find, replace, errors)
+                edit_file(file_name, find, replace, status)
         except Exception as e:
             print(e)
 
-    return errors
+    return status
 
 
-def edit_file(file_name: str, find: str, replace: str, errors):
-    errors.error_index += 1
+def edit_file(file_name: str, find: str, replace: str, status):
+    status.error_index += 1
 
     for file in state.files_context:
         if file_name == file.name:
@@ -76,14 +72,15 @@ def edit_file(file_name: str, find: str, replace: str, errors):
                 file_data = f.read()
 
             if file_data.find(find) == -1:
-                errors.error_replaces.append(errors.error_index)
+                status.error_replaces.append(status.error_index)
                 raise Exception(f"!!! Find data not found in {file_name} !!! ERROR")
 
             file_data = file_data.replace(find, replace)
 
             with open(file.path, "w", encoding="UTF-8") as f:
                 f.write(file_data)
+                status.success_files.add(file)
             break
     else:
-        errors.error_replaces.append(errors.error_index)
+        status.error_replaces.append(status.error_index)
         raise Exception(f"!!! File not found: {file_name} !!! ERROR")

@@ -48,7 +48,7 @@ def save_copy_of_files(response: str):  # on AI EDIT
     for my_file in state.files_context:
         if my_file.name in files_to_save:
             try:
-                with open(my_file.path, "r", encoding="UTF-8", newline="") as f:
+                with open(my_file.path, "r", encoding="UTF-8") as f:
                     backups.add(FileBackup(my_file, f.read()))
             except (OSError, UnicodeDecodeError):
                 continue
@@ -61,7 +61,7 @@ def _snapshot(backups: set[FileBackup]) -> set[FileBackup]:
     snap = set()
     for b in backups:
         try:
-            with open(b.my_file.path, "r", encoding="UTF-8", newline="") as f:
+            with open(b.my_file.path, "r", encoding="UTF-8") as f:
                 snap.add(FileBackup(b.my_file, f.read()))
         except FileNotFoundError:
             pass
@@ -74,15 +74,18 @@ def _restore(backups: set[FileBackup]) -> None:
         if not b.my_file.path.exists():
             continue
 
-        with open(b.my_file.path, "w", encoding="UTF-8", newline="") as f:
+        with open(b.my_file.path, "w", encoding="UTF-8") as f:
             f.write(b.code)
 
 def _show_warning(backups: set[FileBackup]) -> bool:
     manually_changed = set()
 
-    for snap in _snapshot(backups):
-        if not snap in state.last_change_code_save:
-            manually_changed.add(snap)
+    for b in backups:
+        if not b.my_file.path.exists():
+            continue
+
+        if b in state.last_change_code_save:
+            manually_changed.add(b)
 
     if manually_changed:
         action = input(f"{" ".join([m.my_file.name for m in manually_changed])} were edited manually. \nProceeding will erase your manual changes in it. Continue? [y/N]:")
@@ -93,6 +96,7 @@ def _show_warning(backups: set[FileBackup]) -> bool:
             return False
         else:
             print("Wrong input. Try again.")
+            return True
     return False
 
 def undo_files() -> None:
@@ -110,7 +114,7 @@ def undo_files() -> None:
     state.redo_stack.append(_snapshot(backups))
     _restore(backups)
     print("Changes discarded. Use /redo to restore them.")
-    backup_files(backups)
+    update_last_change_code_save(set([b.my_file for b in backups]))
 
 
 def redo_files() -> None:
@@ -128,12 +132,18 @@ def redo_files() -> None:
     state.undo_stack.append(_snapshot(backups))
     _restore(backups)
     print("Changes restored. Use /undo to discard them.")
-    backup_files(backups)
+    update_last_change_code_save(set([b.my_file for b in backups]))
 
+def update_last_change_code_save(backups: set[MyFile]) -> None:
+    backups = set([b for b in backups if b.path.exists()])
 
-def backup_files(backups: set[FileBackup]) -> None:
-    state.last_change_code_save = _snapshot(backups)
-
+    new_set = set()
+    for ls in state.last_change_code_save:
+        if ls.my_file in backups:
+            backups.remove(ls.my_file)
+    for b in backups:
+        with open(b.path, "r", encoding="UTF-8") as f:
+            new_set.add(FileBackup(b, f.read()))
 
 def check_if_first_start():
     fp = Path(__file__).resolve().parent / "first_start"

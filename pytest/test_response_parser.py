@@ -3,10 +3,16 @@ import shutil
 
 from response_parser import do_changes
 from state import state
-from utils import undo_files, redo_files
+from utils import undo_files, redo_files, save_copy_of_files, update_last_change_code_save
 from models import MyFile
 
 import pytest
+
+def do_changes_test(full_output: str):
+    save_copy_of_files(full_output)
+    status = do_changes(full_output)
+    update_last_change_code_save(status.success_files)
+    return status
 
 @pytest.fixture(autouse=True)
 def always_yes(monkeypatch):
@@ -203,7 +209,7 @@ def i_am_ready():
 >>>>>>> REPLACE
 ```
 """
-    errors = do_changes(answer)
+    errors = do_changes_test(answer)
     assert errors.error_replaces == []
 
     with open(polygon_folder / "somefile.py", "r") as f:
@@ -233,7 +239,7 @@ def i_am_ready():
 >>>>>>> REPLACE
 ```
 """
-    errors = do_changes(answer)
+    errors = do_changes_test(answer)
     assert errors.error_replaces == [1]
 
 def test_search_not_found():
@@ -252,7 +258,7 @@ def i_am_ready():
 >>>>>>> REPLACE
 ```
 """
-    errors = do_changes(answer)
+    errors = do_changes_test(answer)
     assert errors.error_replaces == [1]
 
 def test_multi_success_replace():
@@ -281,7 +287,7 @@ time.sleep(0.01)
 >>>>>>> REPLACE
 ``` 
 """
-    do_changes(answer)
+    do_changes_test(answer)
 
     with open(polygon_folder / "somefile.py", "r") as f:
         code = f.read()
@@ -333,7 +339,7 @@ time.sleep(0.01)
 >>>>>>> REPLACE
 ``` 
 """
-    errors = do_changes(answer)
+    errors = do_changes_test(answer)
 
     with open(polygon_folder / "somefile.py", "r") as f:
         code = f.read()
@@ -364,7 +370,7 @@ print("\\nTest successful passed!")
 def test_undo():
     recreate_polygon()
 
-    errors = do_changes(ANSWER_STEP_1)
+    errors = do_changes_test(ANSWER_STEP_1)
     assert errors.error_replaces == []
     assert read_file("somefile.py") == SOMEFILE_AFTER_AI
 
@@ -387,7 +393,7 @@ def test_undo_nothing_to_undo():
 def test_undo_multiple_files_in_one_turn():
     recreate_polygon()
 
-    errors = do_changes(ANSWER_TWO_FILES)
+    errors = do_changes_test(ANSWER_TWO_FILES)
     assert errors.error_replaces == []
     assert read_file("somefile.py") == SOMEFILE_AFTER_AI
     assert read_file("another.py") == ANOTHER_AFTER_AI
@@ -401,8 +407,8 @@ def test_undo_multiple_files_in_one_turn():
 def test_undo_twice_goes_step_by_step():
     recreate_polygon()
 
-    do_changes(ANSWER_STEP_1)
-    do_changes(ANSWER_STEP_2)
+    do_changes_test(ANSWER_STEP_1)
+    do_changes_test(ANSWER_STEP_2)
     assert read_file("somefile.py") == SOMEFILE_AFTER_AI_2
 
     undo_files()
@@ -418,7 +424,7 @@ def test_undo_twice_goes_step_by_step():
 def test_redo():
     recreate_polygon()
 
-    do_changes(ANSWER_STEP_1)
+    do_changes_test(ANSWER_STEP_1)
     undo_files()
     assert read_file("somefile.py") == SOMEFILE_ORIGINAL
 
@@ -441,7 +447,7 @@ def test_redo_nothing_to_redo():
 def test_redo_multiple_files_in_one_turn():
     recreate_polygon()
 
-    do_changes(ANSWER_TWO_FILES)
+    do_changes_test(ANSWER_TWO_FILES)
     undo_files()
     assert read_file("somefile.py") == SOMEFILE_ORIGINAL
     assert read_file("another.py") == ANOTHER_ORIGINAL
@@ -455,8 +461,8 @@ def test_redo_multiple_files_in_one_turn():
 def test_undo_redo_chain():
     recreate_polygon()
 
-    do_changes(ANSWER_STEP_1)
-    do_changes(ANSWER_STEP_2)
+    do_changes_test(ANSWER_STEP_1)
+    do_changes_test(ANSWER_STEP_2)
 
     undo_files()
     undo_files()
@@ -475,7 +481,7 @@ def test_undo_redo_chain():
 def test_undo_after_redo():
     recreate_polygon()
 
-    do_changes(ANSWER_STEP_1)
+    do_changes_test(ANSWER_STEP_1)
     undo_files()
     redo_files()
     assert read_file("somefile.py") == SOMEFILE_AFTER_AI
@@ -488,11 +494,11 @@ def test_undo_after_redo():
 def test_new_ai_turn_clears_redo():
     recreate_polygon()
 
-    do_changes(ANSWER_STEP_1)
+    do_changes_test(ANSWER_STEP_1)
     undo_files()
     assert state.redo_stack != []
 
-    errors = do_changes(ANSWER_OTHER_BRANCH)
+    errors = do_changes_test(ANSWER_OTHER_BRANCH)
     assert errors.error_replaces == []
     assert state.redo_stack == []
     assert read_file("somefile.py") == SOMEFILE_OTHER_BRANCH
@@ -505,9 +511,9 @@ def test_new_ai_turn_clears_redo():
 def test_undo_after_new_branch_returns_to_original():
     recreate_polygon()
 
-    do_changes(ANSWER_STEP_1)
+    do_changes_test(ANSWER_STEP_1)
     undo_files()
-    do_changes(ANSWER_OTHER_BRANCH)
+    do_changes_test(ANSWER_OTHER_BRANCH)
 
     undo_files()
 
@@ -517,7 +523,7 @@ def test_undo_after_new_branch_returns_to_original():
 def test_redo_brings_back_manual_edits():
     recreate_polygon()
 
-    do_changes(ANSWER_STEP_1)
+    do_changes_test(ANSWER_STEP_1)
 
     with open(polygon_folder / "somefile.py", "a") as f:
         f.write(MANUAL_NOTE)
