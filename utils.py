@@ -70,7 +70,10 @@ def _snapshot(backups: set[FileBackup]) -> set[FileBackup]:
 
 def _restore(backups: set[FileBackup]) -> None:
     for b in backups:
-        b.my_file.path.parent.mkdir(parents=True, exist_ok=True)
+
+        if not b.my_file.path.exists():
+            continue
+
         with open(b.my_file.path, "w", encoding="UTF-8", newline="") as f:
             f.write(b.code)
 
