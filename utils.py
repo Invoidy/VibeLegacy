@@ -77,24 +77,62 @@ def _restore(backups: set[FileBackup]) -> None:
         with open(b.my_file.path, "w", encoding="UTF-8", newline="") as f:
             f.write(b.code)
 
+def _show_warning(backups: set[FileBackup]) -> bool:
+    manually_changed = set()
+
+    for snap in _snapshot(backups):
+        if not snap in state.last_change_code_save:
+            manually_changed.add(snap)
+
+    if manually_changed:
+        action = input(f"{" ".join([m.my_file.name for m in manually_changed])} were edited manually. \nProceeding will erase your manual changes in it. Continue? [y/N]:")
+
+        if action in ["", "n", "N"]:
+            return True
+        elif action in ["y", "Y"]:
+            return False
+        else:
+            print("Wrong input. Try again.")
+    return False
 
 def undo_files() -> None:
     if not state.undo_stack:
         print("Nothing to undo")
         return
-    backups = state.undo_stack.pop()
+    backups = state.undo_stack[-1]
+
+    is_cancel = _show_warning(backups)
+    if is_cancel:
+        print("Canceled")
+        return
+
+    state.undo_stack.pop()
     state.redo_stack.append(_snapshot(backups))
     _restore(backups)
+    print("Changes discarded. Use /redo to restore them.")
+    backup_files(backups)
 
 
 def redo_files() -> None:
     if not state.redo_stack:
         print("Nothing to redo")
         return
-    backups = state.redo_stack.pop()
+    backups = state.redo_stack[-1]
+
+    is_cancel = _show_warning(backups)
+    if is_cancel:
+        print("Canceled")
+        return
+
+    state.redo_stack.pop()
     state.undo_stack.append(_snapshot(backups))
     _restore(backups)
+    print("Changes restored. Use /undo to discard them.")
+    backup_files(backups)
 
+
+def backup_files(backups: set[FileBackup]) -> None:
+    state.last_change_code_save = _snapshot(backups)
 
 
 def check_if_first_start():

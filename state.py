@@ -12,6 +12,8 @@ class State:
     undo_stack: list[set[FileBackup]] = field(default_factory=list)
     redo_stack: list[set[FileBackup]] = field(default_factory=list)
 
+    last_change_code_save: set[FileBackup] = field(default_factory=set)
+
     @property
     def files_context(self) -> set[MyFile]:
         new_files_context = set([myfile for myfile in self._files_context if myfile.path.exists()])

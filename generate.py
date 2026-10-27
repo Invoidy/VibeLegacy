@@ -5,6 +5,9 @@ from response_parser import do_changes
 from state import state
 from settings import settings
 import ui
+from models import FileBackup
+
+FILE_LABEL = "File: "
 
 client = OpenAI(base_url=settings.BASE_URL, api_key=settings.API_KEY)
 
@@ -52,6 +55,19 @@ def generate(task: str):
     print("\n")
 
     do_changes(full_output)
+
+
+    find_starts = full_output.split(FILE_LABEL)
+    files_to_save = set([file[:file.find("\n")] for file in find_starts])
+    backups = set()
+    for my_file in state.files_context:
+        if my_file.name in files_to_save:
+            try:
+                with open(my_file.path, "r", encoding="UTF-8", newline="") as f:
+                    backups.add(FileBackup(my_file, f.read()))
+            except (OSError, UnicodeDecodeError):
+                continue
+    state.last_change_code_save = backups
 
     state.chat_history += [
         {"role": "user", "content": task},

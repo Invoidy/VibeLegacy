@@ -6,6 +6,12 @@ from state import state
 from utils import undo_files, redo_files
 from models import MyFile
 
+import pytest
+
+@pytest.fixture(autouse=True)
+def always_yes(monkeypatch):
+    monkeypatch.setattr("builtins.input", lambda _: "Y")
+
 test_dir = Path(__file__).resolve().parent
 polygon_folder = test_dir / "polygon"
 
