@@ -5,7 +5,7 @@ from response_parser import do_changes
 from state import state
 from settings import settings
 import ui
-from utils import update_last_change_code_save, save_copy_of_files
+from utils import update_last_change_code_save
 
 client = OpenAI(base_url=settings.BASE_URL, api_key=settings.API_KEY)
 
@@ -52,8 +52,10 @@ def generate(task: str):
 
     print("\n")
 
-    save_copy_of_files(full_output)
     status = do_changes(full_output)
+    if status.files_backups:
+        state.undo_stack.append(status.files_backups)
+        state.redo_stack.clear()
     update_last_change_code_save(status.success_files)
 
     state.chat_history += [

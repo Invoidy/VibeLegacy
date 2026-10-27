@@ -38,25 +38,6 @@ def find_file_from_project(search: str) -> set[MyFile]:
     return final_set
 
 
-def save_copy_of_files(response: str):  # on AI EDIT
-    state.redo_stack.clear()
-
-    find_starts = response.split(FILE_LABEL)
-    files_to_save = set([file[:file.find("\n")] for file in find_starts])
-
-    backups = set()
-    for my_file in state.files_context:
-        if my_file.name in files_to_save:
-            try:
-                with open(my_file.path, "r", encoding="UTF-8") as f:
-                    backups.add(FileBackup(my_file, f.read()))
-            except (OSError, UnicodeDecodeError):
-                continue
-
-    if backups:
-        state.undo_stack.append(backups)
-
-
 def _snapshot(backups: set[FileBackup]) -> set[FileBackup]:
     snap = set()
     for b in backups:

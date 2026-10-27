@@ -11,7 +11,7 @@
 # >>>>>>> REPLACE
 # ```
 #
-from models import MyFile
+from models import MyFile, FileBackup
 from state import state
 from dataclasses import dataclass, field
 
@@ -25,6 +25,7 @@ class Status:
     error_replaces: list = field(default_factory=list)
     error_index: int = 0
     success_files: set[MyFile] = field(default_factory=set)
+    files_backups: set[FileBackup] = field(default_factory=set)
 
 def do_changes(response: str) -> Status:
     edited_response = response
@@ -77,9 +78,13 @@ def edit_file(file_name: str, find: str, replace: str, status):
 
             file_data = file_data.replace(find, replace)
 
+            with open(file.path, "r", encoding="UTF-8") as f:
+                if not file in status.success_files:
+                    status.files_backups.add(FileBackup(file, f.read()))
+                status.success_files.add(file)
+
             with open(file.path, "w", encoding="UTF-8") as f:
                 f.write(file_data)
-                status.success_files.add(file)
             break
     else:
         status.error_replaces.append(status.error_index)

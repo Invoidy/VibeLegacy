@@ -3,14 +3,16 @@ import shutil
 
 from response_parser import do_changes
 from state import state
-from utils import undo_files, redo_files, save_copy_of_files, update_last_change_code_save
+from utils import undo_files, redo_files, update_last_change_code_save
 from models import MyFile
 
 import pytest
 
 def do_changes_test(full_output: str):
-    save_copy_of_files(full_output)
     status = do_changes(full_output)
+    if status.files_backups:
+        state.undo_stack.append(status.files_backups)
+        state.redo_stack.clear()
     update_last_change_code_save(status.success_files)
     return status
 
