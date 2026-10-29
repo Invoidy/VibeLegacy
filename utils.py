@@ -65,19 +65,24 @@ def _show_warning(backups: set[FileBackup]) -> bool:
         if not b.my_file.path.exists():
             continue
 
-        if b in state.last_change_code_save:
-            manually_changed.add(b)
+        with open(b.my_file.path, "r", encoding="UTF-8") as f:
+            current = f.read()
+
+        for element in state.last_change_code_save:
+            if element.my_file.name == b.my_file.name and current != element.code:
+                manually_changed.add(b)
+                break
 
     if manually_changed:
-        action = input(f"{" ".join([m.my_file.name for m in manually_changed])} were edited manually. \nProceeding will erase your manual changes in it. Continue? [y/N]:")
+        while True:
+            names = " ".join(m.my_file.name for m in manually_changed)
+            action = input(f"{names} were edited manually. \nProceeding will erase your manual changes in it. Continue? [y/N]:")
 
-        if action in ["", "n", "N"]:
-            return True
-        elif action in ["y", "Y"]:
-            return False
-        else:
+            if action in ["", "n", "N"]:
+                return True
+            elif action in ["y", "Y"]:
+                return False
             print("Wrong input. Try again.")
-            return True
     return False
 
 def undo_files() -> None:
@@ -118,13 +123,20 @@ def redo_files() -> None:
 def update_last_change_code_save(backups: set[MyFile]) -> None:
     backups = set([b for b in backups if b.path.exists()])
 
-    new_set = set()
-    for ls in state.last_change_code_save:
-        if ls.my_file in backups:
-            backups.remove(ls.my_file)
+    elements_to_add = set()
+    elements_to_remove = set()
+
     for b in backups:
+        for element in state.last_change_code_save:
+            if b.name == element.my_file.name:
+                elements_to_remove.add(element)
+
         with open(b.path, "r", encoding="UTF-8") as f:
-            new_set.add(FileBackup(b, f.read()))
+            elements_to_add.add(FileBackup(b, f.read()))
+
+    state.last_change_code_save -= elements_to_remove
+    state.last_change_code_save |= elements_to_add
+
 
 def check_if_first_start():
     fp = Path(__file__).resolve().parent / "first_start"
