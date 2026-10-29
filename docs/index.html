@@ -188,7 +188,7 @@
                     </p>
 
                     <p class="text-slate-300 text-base sm:text-lg leading-relaxed mb-8 max-w-2xl mx-auto">
-                        A console AI coding assistant that edits your files using compact <span class="text-brand-400 font-mono font-semibold">SEARCH/REPLACE</span>. You decide what context the model sees, and the most recent change can be instantly undone with <span class="text-blue-400 font-mono font-semibold">/undo</span>.
+                        A console AI coding assistant that edits your files using compact <span class="text-brand-400 font-mono font-semibold">SEARCH/REPLACE</span>. You decide what context the model sees, and every AI edit from the current session can be undone and redone step by step with <span class="text-blue-400 font-mono font-semibold">/undo</span> and <span class="text-blue-400 font-mono font-semibold">/redo</span>.
                     </p>
 
                     <!-- Action buttons -->
@@ -299,11 +299,11 @@
                             </div>
                             <h3 class="text-xl font-bold text-white mb-2">Full control and /undo</h3>
                             <p class="text-slate-400 text-sm leading-relaxed">
-                                You choose which files the AI can access using <code class="text-emerald-400 font-mono">/add</code>. The <code class="text-emerald-400 font-mono">/undo</code> command restores your files to their original state.
+                                You choose which files the AI can access using <code class="text-emerald-400 font-mono">/add</code>. The <code class="text-emerald-400 font-mono">/undo</code> and <code class="text-emerald-400 font-mono">/redo</code> commands step back and forward through AI edits made in the current session, one at a time.
                             </p>
                         </div>
                         <div class="mt-6 pt-4 border-t border-slate-800/80 font-mono text-xs text-emerald-400">
-                            Instant rollback with one command
+                            Step-by-step undo and redo (current session only)
                         </div>
                     </div>
 
@@ -668,7 +668,8 @@ python -m nuitka --standalone --remove-output --output-dir=dist --output-filenam
             { cmd: '/drop <path>', desc: 'Remove the specified file(s) from the context' },
             { cmd: '/dropall', desc: 'Clear all attached file context' },
             { cmd: '/clear', desc: 'Clear the conversation history with the model' },
-            { cmd: '/undo', desc: 'Instantly restore files to their state before the last request' },
+            { cmd: '/undo', desc: 'Undo the last AI edit of the current session, one step at a time' },
+            { cmd: '/redo', desc: 'Redo an undone AI edit of the current session, one step at a time' },
             { cmd: '/config', desc: 'Open the folder containing the .CONFIG_ME configuration file' },
             { cmd: '/exit', desc: 'Exit VibeLegacy' }
         ];

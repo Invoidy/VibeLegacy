@@ -38,8 +38,8 @@ while True:
               /drop <file>           Remove file(s) from the context
               /dropall               Remove all files from the context
               /clear                 Clear chat history
-              /undo                  Undo AI edits, one step at a time
-              /redo                  Redo what /undo reverted, including your manual edits
+              /undo                  Undo the last AI edit of the current session, one step at a time
+              /redo                  Redo an undone AI edit of the current session, one step at a time
               /config                Opens config file's directory
               /exit                  Exit VibeLegacy
 

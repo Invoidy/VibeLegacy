@@ -20,7 +20,7 @@ VibeLegacy is a console AI coding assistant that edits your files through SEARCH
 
 - **Lightweight.** No heavy IDE plugin and no autonomous agent loop: a small console app with a handful of dependencies that starts instantly.
 - **Low cost per task.** The model receives only the files you attach and answers with compact SEARCH/REPLACE blocks instead of rewriting whole files, so each task uses far fewer tokens.
-- **Full control.** You choose what the model sees, it can only edit those files, and `/undo` reverts the last request.
+- **Full control.** You choose what the model sees, it can only edit those files, and `/undo` and `/redo` step back and forward through the AI edits of the current session, one at a time.
 
 ## Usage
 
@@ -42,7 +42,8 @@ Files are looked up relative to the directory you launched from, so use paths li
 | `/drop path/to/file` | Remove a file from the context. Separate several paths with spaces. |
 | `/dropall` | Remove all files from the context |
 | `/clear` | Clear the chat history |
-| `/undo` | Restore files to their state before the last AI request |
+| `/undo` | Undo the last AI edit of the current session, one step at a time |
+| `/redo` | Redo an undone AI edit of the current session, one step at a time |
 | `/config` | Open the folder where `.CONFIG_ME` is stored |
 | `/exit` | Exit VibeLegacy |
 
@@ -112,7 +113,7 @@ The result is placed in `dist/main.dist/` (`dist` is already in `.gitignore`), w
 - Context built from the files you choose with `/add`
 - Streamed responses with a live waiting indicator
 - Chat history that carries over between requests (`/clear` to reset)
-- One-command rollback with `/undo`
+- Step-by-step undo and redo with `/undo` and `/redo`, for the current session only
 - Any OpenAI-compatible API, OpenRouter by default
 - Configurable reasoning effort
 - Multi-line input with Shift+Enter, even in a plain Windows console
