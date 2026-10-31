@@ -72,7 +72,7 @@ On the very first launch VibeLegacy creates a `.CONFIG_ME` file next to `vibeleg
 ```ini
 BASE_URL=https://openrouter.ai/api/v1
 API_KEY=
-MODEL=openai/gpt-6.1-sol
+MODEL=anthropic/claude-haiku-5.5
 REASONING=high
 ```
 

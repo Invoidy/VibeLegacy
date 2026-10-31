@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="ru" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        if (!(navigator.language || '').toLowerCase().startsWith('ru')) {
+            window.location.replace('../index.html' + location.search + location.hash);
+        }
+    </script>
+    <title>VibeLegacy v0.1.1 — консольный ИИ-ассистент для программирования с полным контролем</title>
+    <link rel="icon" type="image/png" href="../logo.png">
+
+    <meta name="google-site-verification" content="oQqnKvMF3r5BzicP3UiJ5TvWWGrARjF0MrsCVE1qr8Y" />
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eefaf6',
+                            100: '#d7f4e8',
+                            400: '#34d399',
+                            500: '#10b981',
+                            600: '#059669',
+                            900: '#064e3b',
+                            accent: '#3b82f6',
+                            purple: '#8b5cf6',
+                            darkBg: '#080c14',
+                            cardBg: 'rgba(15, 23, 42, 0.75)',
+                            terminalBg: '#0d1117'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    animation: {
+                        'pulse-glow': 'pulseGlow 3s infinite ease-in-out',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        pulseGlow: {
+                            '0%, 100%': { opacity: '0.4', filter: 'drop-shadow(0 0 15px rgba(16, 185, 129, 0.3))' },
+                            '50%': { opacity: '0.8', filter: 'drop-shadow(0 0 30px rgba(59, 130, 246, 0.5))' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-6px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #080c14;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #10b981;
+        }
+
+        /* Glassmorphism panels */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-panel-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-panel-hover:hover {
+            border-color: rgba(16, 185, 129, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px -10px rgba(16, 185, 129, 0.15);
+        }
+
+        .glow-border {
+            box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-[#080c14] text-slate-200 font-sans antialiased selection:bg-brand-500 selection:text-slate-950 min-h-screen flex flex-col justify-between">
+
+    <!-- Site header -->
+    <header class="sticky top-0 z-50 glass-panel border-b border-slate-800/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                
+                <!-- >V logo -->
+                <a href="#" class="flex items-center space-x-3 group">
+                    <div class="w-10 h-10 rounded-xl bg-white border border-slate-700 overflow-hidden flex items-center justify-center group-hover:border-brand-500/60 group-hover:shadow-[0_0_14px_rgba(16,185,129,0.45)] transition-all">
+                        <img src="../logo.png" alt="VibeLegacy logo" class="w-full h-full object-contain">
+                    </div>
+                    <div>
+                        <span class="font-mono font-bold text-xl tracking-wider text-white group-hover:text-brand-400 transition-colors">VibeLegacy</span>
+                        <span class="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-brand-400 border border-brand-500/30 ml-2 font-mono">v0.1.1</span>
+                    </div>
+                </a>
+
+                <!-- Desktop navigation -->
+                <nav class="hidden md:flex items-center space-x-8 text-sm font-medium">
+                    <a href="#demo" class="hover:text-brand-400 transition-colors">Демо</a>
+                    <a href="#features" class="hover:text-brand-400 transition-colors">Возможности</a>
+                    <a href="#commands" class="hover:text-brand-400 transition-colors">Команды</a>
+                    <a href="#config" class="hover:text-brand-400 transition-colors">Настройка</a>
+                    <a href="#building" class="hover:text-brand-400 transition-colors">Сборка</a>
+                    <a href="https://www.donationalerts.com/r/invoidy" target="_blank" rel="noopener noreferrer" class="text-amber-400 hover:text-amber-300 transition-colors flex items-center gap-1.5 font-semibold">
+                        <i class="fa-solid fa-heart text-xs"></i> Поддержать
+                    </a>
+                </nav>
+
+                <!-- Download button -->
+                <div class="hidden sm:flex items-center space-x-4">
+                    <a href="https://github.com/Invoidy/VibeLegacy" target="_blank" rel="noopener noreferrer" class="p-2 text-slate-400 hover:text-white transition-colors" title="Репозиторий GitHub">
+                        <i class="fa-brands fa-github text-xl"></i>
+                    </a>
+                    <button onclick="triggerFileDownload()" class="relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-semibold rounded-xl group bg-gradient-to-br from-brand-500 to-blue-600 group-hover:from-brand-500 group-hover:to-blue-600 hover:text-white text-white focus:outline-none focus:ring-2 focus:ring-brand-500/50 shadow-lg shadow-brand-500/20">
+                        <span class="relative px-4 py-2 transition-all ease-in duration-75 bg-slate-950 rounded-[10px] group-hover:bg-opacity-0 flex items-center gap-2">
+                            <i class="fa-brands fa-windows text-brand-400 group-hover:text-white"></i>
+                            Скачать v0.1.1 (amd64)
+                        </span>
+                    </button>
+                </div>
+
+                <!-- Mobile menu (hamburger) -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobileMenuBtn" class="text-slate-400 hover:text-white focus:outline-none p-2">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile navigation -->
+        <div id="mobileMenu" class="hidden md:hidden glass-panel border-b border-slate-800 px-4 pt-2 pb-4 space-y-3">
+            <a href="#demo" class="block py-2 text-slate-300 hover:text-brand-400">Демо</a>
+            <a href="#features" class="block py-2 text-slate-300 hover:text-brand-400">Возможности</a>
+            <a href="#commands" class="block py-2 text-slate-300 hover:text-brand-400">Команды</a>
+            <a href="#config" class="block py-2 text-slate-300 hover:text-brand-400">Настройка</a>
+            <a href="#building" class="block py-2 text-slate-300 hover:text-brand-400">Сборка</a>
+            <a href="https://www.donationalerts.com/r/invoidy" target="_blank" class="block py-2 text-amber-400 font-bold">Поддержать проект</a>
+            <div class="pt-2 border-t border-slate-800 flex flex-col gap-2">
+                <button onclick="triggerFileDownload()" class="w-full py-2.5 bg-brand-500 text-slate-950 font-bold rounded-xl flex items-center justify-center gap-2">
+                    <i class="fa-brands fa-windows"></i> Скачать v0.1.1 (Windows amd64)
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        <!-- Hero -->
+        <section class="relative pt-12 pb-14 md:pt-20 md:pb-20 overflow-hidden">
+            <!-- Background glow -->
+            <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-brand-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="text-center max-w-3xl mx-auto">
+                    
+                                        <!-- Title and tagline -->
+                    <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight text-white mb-3">
+                        VibeLegacy
+                    </h1>
+                    
+                    <p class="text-2xl sm:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-brand-400 via-emerald-300 to-blue-500 mb-6 font-mono">
+                        "Вайб под контролем."
+                    </p>
+
+                    <p class="text-slate-300 text-base sm:text-lg leading-relaxed mb-8 max-w-2xl mx-auto">
+                        Консольный ИИ-ассистент для программирования, который редактирует ваши файлы с помощью компактных <span class="text-brand-400 font-mono font-semibold">SEARCH/REPLACE</span>-блоков. Вы решаете, какой контекст видит модель, а каждую правку ИИ из текущей сессии можно пошагово отменить и вернуть командами <span class="text-blue-400 font-mono font-semibold">/undo</span> и <span class="text-blue-400 font-mono font-semibold">/redo</span>.
+                    </p>
+
+                    <!-- Action buttons -->
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
+                        <button onclick="triggerFileDownload()" class="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-brand-500 to-emerald-600 hover:from-brand-400 hover:to-emerald-500 text-slate-950 font-extrabold rounded-xl shadow-lg shadow-brand-500/25 flex items-center justify-center gap-3 transition-all transform hover:-translate-y-0.5 text-base">
+                            <i class="fa-brands fa-windows text-xl"></i>
+                            <span>Скачать v0.1.1 (Windows amd64)</span>
+                        </button>
+
+                        <a href="https://github.com/Invoidy/VibeLegacy" target="_blank" class="w-full sm:w-auto px-6 py-4 glass-panel hover:bg-slate-800/80 text-white font-medium rounded-xl flex items-center justify-center gap-2 border border-slate-700 transition-all text-base">
+                            <i class="fa-brands fa-github text-xl"></i>
+                            <span>Исходный код на GitHub</span>
+                        </a>
+
+                        <a href="guide.html" class="w-full sm:w-auto px-6 py-4 glass-panel hover:bg-slate-800/80 text-white font-medium rounded-xl flex items-center justify-center gap-2 border border-slate-700 transition-all text-base">
+                            <i class="fa-solid fa-book-open text-xl text-brand-400"></i>
+                            <span>Руководство для начинающих</span>
+                        </a>
+                    </div>
+
+                    <!-- Meta tags -->
+                    <div class="flex flex-wrap items-center justify-center gap-3 text-xs font-mono text-slate-400">
+                        <span class="px-3 py-1.5 rounded-lg bg-slate-900/80 border border-slate-800 flex items-center gap-1.5">
+                            <i class="fa-brands fa-python text-blue-400"></i> Python 3.14+
+                        </span>
+                        <span class="px-3 py-1.5 rounded-lg bg-slate-900/80 border border-slate-800 flex items-center gap-1.5">
+                            <i class="fa-solid fa-scale-balanced text-emerald-400"></i> Лицензия GPL v3
+                        </span>
+                        <span class="px-3 py-1.5 rounded-lg bg-slate-900/80 border border-slate-800 flex items-center gap-1.5">
+                            <i class="fa-solid fa-microchip text-purple-400"></i> Windows amd64 .exe
+                        </span>
+                        <span class="px-3 py-1.5 rounded-lg bg-slate-900/80 border border-slate-800 flex items-center gap-1.5">
+                            <i class="fa-solid fa-bolt text-amber-400"></i> Поддержка OpenRouter и OpenAI
+                        </span>
+                    </div>
+
+                </div>
+
+
+            </div>
+        </section>
+
+        <!-- Demo section -->
+        <section id="demo" class="py-16 md:py-24 border-t border-slate-800/60 relative overflow-hidden scroll-mt-16">
+            <!-- Background glow -->
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-brand-500/10 rounded-full blur-[130px] pointer-events-none"></div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="text-center max-w-2xl mx-auto mb-10">
+                    <h2 class="text-xs font-mono font-bold tracking-widest text-brand-400 uppercase mb-2">Смотрите в действии</h2>
+                    <p class="text-3xl font-extrabold text-white sm:text-4xl">VibeLegacy в работе</p>
+                    <p class="mt-3 text-slate-400 text-base">Добавьте файлы в контекст, опишите задачу и просмотрите компактные SEARCH/REPLACE-правки — прямо из терминала.</p>
+                </div>
+
+                <div class="max-w-5xl mx-auto glass-panel rounded-2xl p-2 sm:p-3 border border-slate-800 glow-border">
+                    <video id="demoVideo" class="block w-full aspect-video rounded-xl bg-black pointer-events-none select-none" autoplay muted loop playsinline disablepictureinpicture disableremoteplayback preload="auto" poster="../demo_poster.jpg">
+                        <source src="../demo.mp4" type="video/mp4">
+                        Ваш браузер не поддерживает HTML5-видео. <a href="../demo.mp4" class="text-brand-400 underline">Скачать демо</a> вместо этого.
+                    </video>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features section -->
+        <section id="features" class="py-16 md:py-24 bg-slate-950/50 border-t border-slate-800/60 relative">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <div class="text-center max-w-2xl mx-auto mb-16">
+                    <h2 class="text-xs font-mono font-bold tracking-widest text-brand-400 uppercase mb-2">Создан для скорости и точности</h2>
+                    <p class="text-3xl font-extrabold text-white sm:text-4xl">Почему разработчики выбирают VibeLegacy</p>
+                    <p class="mt-3 text-slate-400 text-base">Никаких тяжёлых плагинов и автопилотов — только быстрый консольный интерфейс и полный контроль над каждым файлом.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    
+                    <!-- Card 1 -->
+                    <div class="glass-panel p-6 rounded-2xl glass-panel-hover flex flex-col justify-between">
+                        <div>
+                            <div class="w-12 h-12 rounded-xl bg-brand-500/10 border border-brand-500/30 text-brand-400 flex items-center justify-center text-xl mb-5">
+                                ⚡
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-2">Мгновенный запуск</h3>
+                            <p class="text-slate-400 text-sm leading-relaxed">
+                                Запускается за долю секунды прямо из консоли в папке вашего проекта. Минимальное потребление памяти, никаких фоновых процессов.
+                            </p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-slate-800/80 font-mono text-xs text-brand-400">
+                            Запуск из cmd / PowerShell
+                        </div>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="glass-panel p-6 rounded-2xl glass-panel-hover flex flex-col justify-between">
+                        <div>
+                            <div class="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/30 text-blue-400 flex items-center justify-center text-xl mb-5">
+                                💰
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-2">Экономия токенов</h3>
+                            <p class="text-slate-400 text-sm leading-relaxed">
+                                Модель присылает точечные SEARCH/REPLACE-блоки вместо переписывания всего файла, что экономит токены API.
+                            </p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-slate-800/80 font-mono text-xs text-blue-400">
+                            Минимальный расход токенов на каждую правку
+                        </div>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="glass-panel p-6 rounded-2xl glass-panel-hover flex flex-col justify-between">
+                        <div>
+                            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center text-xl mb-5">
+                                🛡️
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-2">Полный контроль и /undo</h3>
+                            <p class="text-slate-400 text-sm leading-relaxed">
+                                Вы сами выбираете, к каким файлам ИИ имеет доступ, с помощью <code class="text-emerald-400 font-mono">/add</code>. Команды <code class="text-emerald-400 font-mono">/undo</code> и <code class="text-emerald-400 font-mono">/redo</code> шаг за шагом перемещаются назад и вперёд по правкам ИИ в текущей сессии.
+                            </p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-slate-800/80 font-mono text-xs text-emerald-400">
+                            Пошаговая отмена и повтор (только текущая сессия)
+                        </div>
+                    </div>
+
+                    <!-- Card 4 -->
+                    <div class="glass-panel p-6 rounded-2xl glass-panel-hover flex flex-col justify-between">
+                        <div>
+                            <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-400 flex items-center justify-center text-xl mb-5">
+                                🔌
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-2">Любой API, совместимый с OpenAI</h3>
+                            <p class="text-slate-400 text-sm leading-relaxed">
+                                Работает с любым провайдером: OpenRouter (по умолчанию), OpenAI, DeepSeek или локальными моделями через Ollama или vLLM.
+                            </p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-slate-800/80 font-mono text-xs text-purple-400">
+                            Настраиваемые base_url и уровень рассуждений
+                        </div>
+                    </div>
+
+                    <!-- Card 5 -->
+                    <div class="glass-panel p-6 rounded-2xl glass-panel-hover flex flex-col justify-between">
+                        <div>
+                            <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center text-xl mb-5">
+                                ⌨️
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-2">Удобный ввод</h3>
+                            <p class="text-slate-400 text-sm leading-relaxed">
+                                Многострочные сообщения через <code class="text-amber-400 font-mono">Shift+Enter</code>, остановка генерации — <code class="text-amber-400 font-mono">Ctrl+C</code>, вставка — правым кликом.
+                            </p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-slate-800/80 font-mono text-xs text-amber-400">
+                            На базе prompt_toolkit
+                        </div>
+                    </div>
+
+                    <!-- Card 6 -->
+                    <div class="glass-panel p-6 rounded-2xl glass-panel-hover flex flex-col justify-between">
+                        <div>
+                            <div class="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 flex items-center justify-center text-xl mb-5">
+                                📦
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-2">Готовый к запуску .exe</h3>
+                            <p class="text-slate-400 text-sm leading-relaxed">
+                                Собран с помощью Nuitka в автономный исполняемый файл для Windows amd64. Установка Python не требуется.
+                            </p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-slate-800/80 font-mono text-xs text-cyan-400">
+                            Windows amd64 / x64
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Commands and shortcuts section -->
+        <section id="commands" class="py-16 md:py-24 relative">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+                    <div>
+                        <h2 class="text-xs font-mono font-bold tracking-widest text-brand-400 uppercase mb-2">Справка по CLI</h2>
+                        <h3 class="text-3xl font-extrabold text-white">Команды и горячие клавиши</h3>
+                    </div>
+                    
+                    <!-- Command search -->
+                    <div class="relative w-full md:w-72">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
+                        <input type="text" id="commandSearch" placeholder="Поиск команд..." oninput="filterCommands()" class="w-full pl-10 pr-4 py-2 bg-slate-900 border border-slate-800 rounded-xl text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-colors font-mono">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Commands table -->
+                    <div class="lg:col-span-2 glass-panel rounded-2xl overflow-hidden border border-slate-800">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left font-mono text-sm">
+                                <thead class="bg-slate-900/80 text-xs text-slate-400 uppercase border-b border-slate-800">
+                                    <tr>
+                                        <th class="px-6 py-4">Команда</th>
+                                        <th class="px-6 py-4">Описание</th>
+                                        <th class="px-4 py-4 text-right">Копировать</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="commandsTableBody" class="divide-y divide-slate-800/60">
+                                    <!-- Filled dynamically via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Keyboard shortcuts -->
+                    <div class="glass-panel p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
+                        <div>
+                            <h4 class="text-lg font-bold text-white mb-4 flex items-center gap-2 font-mono">
+                                <i class="fa-solid fa-keyboard text-brand-400"></i> Горячие клавиши
+                            </h4>
+                            <div class="space-y-3 font-mono text-xs">
+                                <div class="flex items-center justify-between p-3 rounded-xl bg-slate-900/60 border border-slate-800/80">
+                                    <span class="text-slate-400">Отправить запрос</span>
+                                    <kbd class="px-2.5 py-1 bg-slate-800 rounded text-brand-400 font-bold border border-slate-700">Enter</kbd>
+                                </div>
+                                <div class="flex items-center justify-between p-3 rounded-xl bg-slate-900/60 border border-slate-800/80">
+                                    <span class="text-slate-400">Новая строка</span>
+                                    <div class="flex gap-1">
+                                        <kbd class="px-1.5 py-0.5 bg-slate-800 rounded text-slate-300 border border-slate-700">Shift</kbd>+<kbd class="px-1.5 py-0.5 bg-slate-800 rounded text-slate-300 border border-slate-700">Enter</kbd>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between p-3 rounded-xl bg-slate-900/60 border border-slate-800/80">
+                                    <span class="text-slate-400">Остановить генерацию</span>
+                                    <kbd class="px-2 py-1 bg-slate-800 rounded text-red-400 font-bold border border-slate-700">Ctrl+C</kbd>
+                                </div>
+                                <div class="flex items-center justify-between p-3 rounded-xl bg-slate-900/60 border border-slate-800/80">
+                                    <span class="text-slate-400">Вставить из буфера</span>
+                                    <kbd class="px-2 py-1 bg-slate-800 rounded text-blue-400 font-bold border border-slate-700">Правый клик</kbd>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 p-4 rounded-xl bg-brand-500/10 border border-brand-500/20 text-xs text-slate-300">
+                            <p><strong class="text-brand-400">Совет:</strong> Указывайте пути к файлам относительно папки запуска (например, <code class="text-white">/add src/app.py utils.py</code>).</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Configuration section (.CONFIG_ME) -->
+        <section id="config" class="py-16 md:py-24 bg-slate-950/50 border-t border-slate-800/60">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+                    <div>
+                        <h2 class="text-xs font-mono font-bold tracking-widest text-brand-400 uppercase mb-2">Настройка приложения</h2>
+                        <h3 class="text-3xl font-extrabold text-white mb-4">Настройка <code class="text-brand-400">.CONFIG_ME</code></h3>
+                        
+                        <p class="text-slate-300 text-sm sm:text-base leading-relaxed mb-6">
+                            При самом первом запуске <code class="text-white font-mono">vibelegacy.exe</code> автоматически создаёт шаблон файла <code class="text-brand-400 font-mono">.CONFIG_ME</code> рядом с исполняемым файлом, открывает папку в проводнике и завершает работу.
+                        </p>
+
+                        <div class="space-y-4 font-mono text-xs mb-6">
+                            <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 flex items-start gap-3">
+                                <div class="text-brand-400 font-bold text-sm bg-brand-500/10 w-6 h-6 rounded-full flex items-center justify-center shrink-0">1</div>
+                                <div>
+                                    <strong class="text-white text-sm block mb-1">Укажите свои ключи</strong>
+                                    Откройте <code class="text-brand-400">.CONFIG_ME</code> в любом текстовом редакторе и укажите свой <code class="text-slate-200">API_KEY</code>.
+                                </div>
+                            </div>
+
+                            <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 flex items-start gap-3">
+                                <div class="text-brand-400 font-bold text-sm bg-brand-500/10 w-6 h-6 rounded-full flex items-center justify-center shrink-0">2</div>
+                                <div>
+                                    <strong class="text-white text-sm block mb-1">Запустите снова</strong>
+                                    Сохраните файл и снова запустите <code class="text-white">vibelegacy.exe</code>. Приложение готово к работе!
+                                </div>
+                            </div>
+
+                            <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 flex items-start gap-3">
+                                <div class="text-brand-400 font-bold text-sm bg-brand-500/10 w-6 h-6 rounded-full flex items-center justify-center shrink-0">3</div>
+                                <div>
+                                    <strong class="text-white text-sm block mb-1">Команда /config</strong>
+                                    В любой момент введите <code class="text-emerald-400">/config</code>, чтобы быстро открыть папку с файлом конфигурации.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ready-made config example with a copy button -->
+                    <div class="glass-panel p-6 rounded-2xl border border-slate-800">
+                        <div class="flex items-center justify-between mb-4 border-b border-slate-800 pb-3">
+                            <span class="font-mono text-sm font-bold text-slate-200 flex items-center gap-2">
+                                <i class="fa-solid fa-file-code text-brand-400"></i> Пример файла .CONFIG_ME
+                            </span>
+                            <button onclick="copyConfigExample()" class="px-3 py-1.5 bg-brand-500/20 hover:bg-brand-500/30 text-brand-400 rounded-lg text-xs font-mono font-semibold transition-colors flex items-center gap-1.5">
+                                <i class="fa-regular fa-copy"></i> Копировать пример
+                            </button>
+                        </div>
+
+                        <!-- Example code -->
+                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 font-mono text-xs text-emerald-400 overflow-x-auto leading-relaxed mb-6">
+                            <pre id="configExampleText">BASE_URL=https://openrouter.ai/api/v1
+API_KEY=your_api_key_here
+MODEL=anthropic/claude-haiku-5.5
+REASONING=high</pre>
+                        </div>
+
+                        <!-- Parameter descriptions -->
+                        <div class="space-y-3 font-mono text-xs">
+                            <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-800/80">
+                                <span class="text-brand-400 font-bold">BASE_URL:</span>
+                                <span class="text-slate-400">URL любого API, совместимого с OpenAI (по умолчанию OpenRouter).</span>
+                            </div>
+                            <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-800/80">
+                                <span class="text-brand-400 font-bold">API_KEY:</span>
+                                <span class="text-slate-400">Ваш персональный API-ключ от провайдера.</span>
+                            </div>
+                            <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-800/80">
+                                <span class="text-brand-400 font-bold">MODEL:</span>
+                                <span class="text-slate-400">Идентификатор модели (например, <code class="text-slate-200">anthropic/claude-haiku-5.5</code> или <code class="text-slate-200">deepseek/deepseek-v4.1-flash-1017</code>).</span>
+                            </div>
+                            <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-800/80">
+                                <span class="text-brand-400 font-bold">REASONING:</span>
+                                <span class="text-slate-400">Уровень рассуждений (<code class="text-slate-200">none</code>, <code class="text-slate-200">low</code>, <code class="text-slate-200">medium</code>, <code class="text-slate-200">high</code>, <code class="text-slate-200">xhigh</code>, <code class="text-slate-200">max</code>) или оставьте пустым.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Build-from-source section (Nuitka) -->
+        <section id="building" class="py-16 md:py-24 relative">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <div class="text-center max-w-2xl mx-auto mb-12">
+                    <h2 class="text-xs font-mono font-bold tracking-widest text-brand-400 uppercase mb-2">Разработка</h2>
+                    <h3 class="text-3xl font-extrabold text-white">Сборка .exe с помощью Nuitka</h3>
+                    <p class="mt-3 text-slate-400 text-sm">Вы можете самостоятельно собрать VibeLegacy в автономный исполняемый файл для Windows с помощью компилятора Nuitka.</p>
+                </div>
+
+                <div class="max-w-3xl mx-auto glass-panel p-6 rounded-2xl border border-slate-800">
+                    <div class="flex items-center justify-between mb-4 pb-2 border-b border-slate-800">
+                        <span class="font-mono text-xs text-slate-400 flex items-center gap-2">
+                            <i class="fa-solid fa-terminal text-brand-400"></i> Команды сборки для PowerShell / CMD
+                        </span>
+                        <button onclick="copyBuildScript()" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-xs font-mono transition-colors flex items-center gap-1.5">
+                            <i class="fa-regular fa-copy"></i> Копировать
+                        </button>
+                    </div>
+
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 font-mono text-xs text-slate-300 overflow-x-auto leading-relaxed">
+                        <pre id="buildScriptText"><span class="text-slate-500"># 1. Клонируйте репозиторий</span>
+git clone https://github.com/Invoidy/VibeLegacy.git
+cd VibeLegacy
+
+<span class="text-slate-500"># 2. Создайте и активируйте виртуальное окружение Python 3.14+</span>
+python -m venv venv
+venv\Scripts\activate
+
+<span class="text-slate-500"># 3. Установите зависимости</span>
+pip install -r requirements.txt
+pip install nuitka
+
+<span class="text-slate-500"># 4. Соберите исполняемый файл .exe</span>
+python -m nuitka --standalone --remove-output --output-dir=dist --output-filename=vibelegacy.exe --windows-icon-from-ico=logo.ico --include-package-data=binaryornot --include-data-files=first_start=first_start main.py</pre>
+                    </div>
+
+                    <p class="text-xs text-slate-400 mt-4 font-mono">
+                        <i class="fa-solid fa-circle-check text-brand-400 mr-1"></i> Результат сборки появится в <code class="text-slate-200">dist/main.dist/vibelegacy.exe</code>.
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Project support section (DonationAlerts) -->
+        <section class="py-16 bg-gradient-to-br from-brand-900/30 via-slate-950 to-slate-900 border-t border-slate-800">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <div class="max-w-2xl mx-auto">
+                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 text-2xl mb-4">
+                        <i class="fa-solid fa-heart"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-2">Поддержать разработку</h3>
+                    <p class="text-slate-300 text-sm mb-6 leading-relaxed">
+                        VibeLegacy — бесплатное программное обеспечение с открытым исходным кодом под лицензией GPL v3.0. Если инструмент помогает в вашей работе, вы можете поддержать автора!
+                    </p>
+                    
+                    <a href="https://www.donationalerts.com/r/invoidy" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-slate-950 font-extrabold rounded-xl shadow-lg shadow-amber-500/20 transition-all transform hover:-translate-y-0.5 text-base">
+                        <i class="fa-solid fa-hand-holding-dollar text-xl"></i>
+                        <span>Поддержать через DonationAlerts</span>
+                    </a>
+
+                    <p class="text-xs text-slate-500 mt-4 font-mono">
+                        Автор проекта: <strong class="text-slate-300">@Invoidy</strong>
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 border-t border-slate-800 py-12 text-slate-400 text-xs font-mono">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="flex items-center space-x-3">
+                    <span class="text-brand-400 font-bold text-base">&gt;_ VibeLegacy</span>
+                    <span class="text-slate-600">|</span>
+                    <span>Разработчик: <a href="https://github.com/Invoidy" target="_blank" class="text-slate-200 hover:text-brand-400 underline">@Invoidy</a></span>
+                </div>
+
+                <div class="flex items-center space-x-6">
+                    <a href="https://github.com/Invoidy/VibeLegacy" target="_blank" class="hover:text-white transition-colors">
+                        <i class="fa-brands fa-github text-base mr-1"></i> Репозиторий GitHub
+                    </a>
+                    <a href="https://github.com/Invoidy/VibeLegacy/blob/main/LICENSE" target="_blank" class="hover:text-white transition-colors">
+                        <i class="fa-solid fa-scale-balanced text-base mr-1"></i> Лицензия GPL v3
+                    </a>
+                </div>
+            </div>
+
+            <div class="mt-8 pt-6 border-t border-slate-900 text-center text-slate-600">
+                <p>VibeLegacy v0.1.1 (Windows amd64) • Вайб под контролем.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Download modal -->
+    <div id="downloadModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+        <div class="glass-panel max-w-lg w-full rounded-2xl border border-slate-800 shadow-2xl p-6 relative animate-float">
+            <button onclick="closeDownloadModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-xl bg-white border border-slate-700 overflow-hidden flex items-center justify-center">
+                    <img src="../logo.png" alt="VibeLegacy logo" class="w-full h-full object-contain">
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-white">VibeLegacy v0.1.1</h3>
+                    <p class="text-xs text-slate-400 font-mono">Архитектура: Windows amd64 (x64)</p>
+                </div>
+            </div>
+
+            <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 text-xs text-slate-300 space-y-3 font-mono mb-6">
+                <div class="flex justify-between text-slate-400 pb-2 border-b border-slate-800">
+                    <span>Пакет:</span> <span class="text-white">vibelegacy-v0.1.1-win-amd64.zip</span>
+                </div>
+                <div class="flex justify-between text-slate-400 pb-2 border-b border-slate-800">
+                    <span>Файлы:</span> <span class="text-white">vibelegacy.exe, маркер first_start</span>
+                </div>
+                <div class="flex justify-between text-slate-400">
+                    <span>Платформа:</span> <span class="text-brand-400">Windows 10 / 11 64-бит</span>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <button onclick="triggerFileDownload()" class="w-full py-3 bg-gradient-to-r from-brand-500 to-emerald-600 hover:from-brand-400 hover:to-emerald-500 text-slate-950 font-bold rounded-xl shadow-lg shadow-brand-500/20 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-download"></i> Скачать пакет (.ZIP)
+                </button>
+                <a href="https://github.com/Invoidy/VibeLegacy/releases" target="_blank" class="block text-center text-xs text-slate-400 hover:text-brand-400 font-mono py-1">
+                    Или перейдите к релизу на GitHub <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast notification -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 hidden glass-panel px-4 py-3 rounded-xl border border-brand-500/40 text-brand-400 text-xs font-mono flex items-center gap-2 shadow-2xl">
+        <i class="fa-solid fa-check-circle text-base"></i>
+        <span id="toastMsg">Скопировано в буфер обмена!</span>
+    </div>
+
+    <!-- JavaScript logic -->
+    <script>
+        // VibeLegacy command list
+        const commandsList = [
+            { cmd: '/help', desc: 'Показать справку со списком всех команд' },
+            { cmd: '/add <path>', desc: 'Добавить файл(ы) в контекст ИИ (можно перечислить несколько через пробел)' },
+            { cmd: '/drop <path>', desc: 'Удалить указанные файлы из контекста' },
+            { cmd: '/dropall', desc: 'Очистить весь прикреплённый контекст файлов' },
+            { cmd: '/clear', desc: 'Очистить историю переписки с моделью' },
+            { cmd: '/undo', desc: 'Отменить последнюю правку ИИ в текущей сессии, по одному шагу' },
+            { cmd: '/redo', desc: 'Вернуть отменённую правку ИИ в текущей сессии, по одному шагу' },
+            { cmd: '/config', desc: 'Открыть папку с файлом конфигурации .CONFIG_ME' },
+            { cmd: '/exit', desc: 'Выйти из VibeLegacy' }
+        ];
+
+        // Render the commands table
+        function escapeHtml(s) {
+            return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        function renderCommands(filter = '') {
+            const tbody = document.getElementById('commandsTableBody');
+            tbody.innerHTML = '';
+
+            const filtered = commandsList.filter(c => 
+                c.cmd.toLowerCase().includes(filter.toLowerCase()) || 
+                c.desc.toLowerCase().includes(filter.toLowerCase())
+            );
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="3" class="px-6 py-6 text-center text-slate-500 font-mono">Команды не найдены</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-900/50 transition-colors';
+                tr.innerHTML = `
+                    <td class="px-6 py-4 text-brand-400 font-bold whitespace-nowrap">${escapeHtml(item.cmd)}</td>
+                    <td class="px-6 py-4 text-slate-300 text-xs font-sans">${item.desc}</td>
+                    <td class="px-4 py-4 text-right whitespace-nowrap">
+                        <button onclick="copyToClipboard('${item.cmd.split(' ')[0]}')" class="p-1.5 text-slate-400 hover:text-brand-400 transition-colors" title="Копировать команду">
+                            <i class="fa-regular fa-copy"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filterCommands() {
+            const val = document.getElementById('commandSearch').value;
+            renderCommands(val);
+        }
+
+        function copyConfigExample() {
+            const text = document.getElementById('configExampleText').textContent;
+            copyToClipboard(text, 'Пример конфига скопирован!');
+        }
+
+        function copyBuildScript() {
+            const text = document.getElementById('buildScriptText').textContent;
+            copyToClipboard(text, 'Скрипт сборки скопирован!');
+        }
+
+        function copyToClipboard(text, customMessage = 'Скопировано в буфер обмена!') {
+            const dummy = document.createElement('textarea');
+            document.body.appendChild(dummy);
+            dummy.value = text;
+            dummy.select();
+            document.execCommand('copy');
+            document.body.removeChild(dummy);
+
+            showToast(customMessage);
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            toastMsg.textContent = msg;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+
+        function openDownloadModal() {
+            document.getElementById('downloadModal').classList.remove('hidden');
+        }
+
+        function closeDownloadModal() {
+            document.getElementById('downloadModal').classList.add('hidden');
+        }
+
+        function triggerFileDownload() {
+            window.location.href = 'https://github.com/Invoidy/VibeLegacy/releases/download/0.1.1/VibeLegacy-Setup-0.1.1.exe';
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderCommands();
+
+            // Mobile menu toggle
+            document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+                document.getElementById('mobileMenu').classList.toggle('hidden');
+            });
+        });
+    </script>
+</body>
+</html>

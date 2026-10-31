@@ -3,6 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        if ((navigator.language || '').toLowerCase().startsWith('ru')) {
+            window.location.replace('ru/index.html' + location.search + location.hash);
+        }
+    </script>
     <title>VibeLegacy v0.1.1 — A console AI coding assistant with full control</title>
     <link rel="icon" type="image/png" href="logo.png">
 
@@ -121,8 +126,8 @@
 
                 <!-- Desktop navigation -->
                 <nav class="hidden md:flex items-center space-x-8 text-sm font-medium">
-                    <a href="#features" class="hover:text-brand-400 transition-colors">Features</a>
                     <a href="#demo" class="hover:text-brand-400 transition-colors">Demo</a>
+                    <a href="#features" class="hover:text-brand-400 transition-colors">Features</a>
                     <a href="#commands" class="hover:text-brand-400 transition-colors">Commands</a>
                     <a href="#config" class="hover:text-brand-400 transition-colors">Configuration</a>
                     <a href="#building" class="hover:text-brand-400 transition-colors">Build</a>
@@ -155,8 +160,8 @@
 
         <!-- Mobile navigation -->
         <div id="mobileMenu" class="hidden md:hidden glass-panel border-b border-slate-800 px-4 pt-2 pb-4 space-y-3">
-            <a href="#features" class="block py-2 text-slate-300 hover:text-brand-400">Features</a>
             <a href="#demo" class="block py-2 text-slate-300 hover:text-brand-400">Demo</a>
+            <a href="#features" class="block py-2 text-slate-300 hover:text-brand-400">Features</a>
             <a href="#commands" class="block py-2 text-slate-300 hover:text-brand-400">Commands</a>
             <a href="#config" class="block py-2 text-slate-300 hover:text-brand-400">Configuration</a>
             <a href="#building" class="block py-2 text-slate-300 hover:text-brand-400">Build</a>
@@ -201,6 +206,11 @@
                         <a href="https://github.com/Invoidy/VibeLegacy" target="_blank" class="w-full sm:w-auto px-6 py-4 glass-panel hover:bg-slate-800/80 text-white font-medium rounded-xl flex items-center justify-center gap-2 border border-slate-700 transition-all text-base">
                             <i class="fa-brands fa-github text-xl"></i>
                             <span>Source code on GitHub</span>
+                        </a>
+
+                        <a href="guide.html" class="w-full sm:w-auto px-6 py-4 glass-panel hover:bg-slate-800/80 text-white font-medium rounded-xl flex items-center justify-center gap-2 border border-slate-700 transition-all text-base">
+                            <i class="fa-solid fa-book-open text-xl text-brand-400"></i>
+                            <span>Beginner's guide</span>
                         </a>
                     </div>
 
@@ -488,7 +498,7 @@
                         <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 font-mono text-xs text-emerald-400 overflow-x-auto leading-relaxed mb-6">
                             <pre id="configExampleText">BASE_URL=https://openrouter.ai/api/v1
 API_KEY=your_api_key_here
-MODEL=openai/gpt-6.1-sol
+MODEL=anthropic/claude-haiku-5.5
 REASONING=high</pre>
                         </div>
 
@@ -504,7 +514,7 @@ REASONING=high</pre>
                             </div>
                             <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-800/80">
                                 <span class="text-brand-400 font-bold">MODEL:</span>
-                                <span class="text-slate-400">Model identifier (e.g. <code class="text-slate-200">openai/gpt-6.1-sol</code> or <code class="text-slate-200">deepseek/deepseek-v4.1-flash-1017</code>).</span>
+                                <span class="text-slate-400">Model identifier (e.g. <code class="text-slate-200">anthropic/claude-haiku-5.5</code> or <code class="text-slate-200">deepseek/deepseek-v4.1-flash-1017</code>).</span>
                             </div>
                             <div class="p-3 bg-slate-900/60 rounded-xl border border-slate-800/80">
                                 <span class="text-brand-400 font-bold">REASONING:</span>

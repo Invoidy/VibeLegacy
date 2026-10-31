@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="ru" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        if (!(navigator.language || '').toLowerCase().startsWith('ru')) {
+            window.location.replace('../guide.html' + location.search + location.hash);
+        }
+    </script>
+    <title>VibeLegacy — гайд для начинающих (пошаговая инструкция)</title>
+    <link rel="icon" type="image/png" href="../logo.png">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eefaf6',
+                            100: '#d7f4e8',
+                            400: '#34d399',
+                            500: '#10b981',
+                            600: '#059669',
+                            900: '#064e3b',
+                            accent: '#3b82f6',
+                            purple: '#8b5cf6',
+                            darkBg: '#080c14',
+                            cardBg: 'rgba(15, 23, 42, 0.75)',
+                            terminalBg: '#0d1117'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-6px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #080c14; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #10b981; }
+
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glow-border { box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.2); }
+
+        .step-line {
+            background: linear-gradient(to bottom, rgba(16,185,129,0.6), rgba(16,185,129,0.05));
+        }
+    </style>
+</head>
+<body class="bg-[#080c14] text-slate-200 font-sans antialiased selection:bg-brand-500 selection:text-slate-950 min-h-screen flex flex-col justify-between">
+
+    <!-- Site header -->
+    <header class="sticky top-0 z-50 glass-panel border-b border-slate-800/80">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+
+                <a href="index.html" class="flex items-center space-x-3 group">
+                    <div class="w-10 h-10 rounded-xl bg-white border border-slate-700 overflow-hidden flex items-center justify-center group-hover:border-brand-500/60 group-hover:shadow-[0_0_14px_rgba(16,185,129,0.45)] transition-all">
+                        <img src="../logo.png" alt="VibeLegacy logo" class="w-full h-full object-contain">
+                    </div>
+                    <div>
+                        <span class="font-mono font-bold text-xl tracking-wider text-white group-hover:text-brand-400 transition-colors">VibeLegacy</span>
+                        <span class="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-brand-400 border border-brand-500/30 ml-2 font-mono">гайд</span>
+                    </div>
+                </a>
+
+                <a href="index.html" class="hidden sm:flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-brand-400 transition-colors">
+                    <i class="fa-solid fa-arrow-left text-xs"></i> На главную
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+
+        <!-- Hero -->
+        <section class="relative pt-14 pb-10 md:pt-20 overflow-hidden">
+            <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-brand-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+
+            <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+                <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/80 border border-slate-800 text-xs font-mono text-brand-400 mb-5">
+                    <i class="fa-solid fa-heart"></i> Максимально понятно
+                </span>
+                <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white mb-4">
+                    Гайд для начинающих
+                </h1>
+                <p class="text-slate-300 text-base sm:text-lg leading-relaxed max-w-xl mx-auto">
+                    Просто повторяй шаги по порядку — ничего не нужно знать заранее.
+                </p>
+            </div>
+        </section>
+
+        <!-- Шаги -->
+        <section class="py-10 relative">
+            <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+
+                <!-- Шаг 1 -->
+                <div class="flex gap-5">
+                    <div class="flex flex-col items-center">
+                        <div class="w-11 h-11 shrink-0 rounded-full bg-brand-500/15 border border-brand-500/40 text-brand-400 font-mono font-bold flex items-center justify-center">1</div>
+                        <div class="w-px flex-grow step-line mt-2"></div>
+                    </div>
+                    <div class="glass-panel rounded-2xl p-6 border border-slate-800 mb-2 w-full">
+                        <h3 class="text-xl font-bold text-white mb-2">Скачай и установи VibeLegacy</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-4">
+                            Скачай установщик по ссылке ниже и запусти его.
+                        </p>
+                        <a href="https://github.com/Invoidy/VibeLegacy/releases/download/0.1.1/VibeLegacy-Setup-0.1.1.exe" class="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-brand-500 to-emerald-600 hover:from-brand-400 hover:to-emerald-500 text-slate-950 font-bold rounded-xl text-sm mb-4">
+                            <i class="fa-solid fa-download"></i> VibeLegacy-Setup-0.1.1.exe
+                        </a>
+                        <div class="flex items-start gap-2 p-3 rounded-xl bg-brand-500/10 border border-brand-500/20 text-xs text-slate-300">
+                            <i class="fa-solid fa-circle-info text-brand-400 mt-0.5"></i>
+                            <span>После установки программу можно запускать командой <code class="font-mono text-white">vibelegacy</code> из любой папки через cmd.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Шаг 2 -->
+                <div class="flex gap-5">
+                    <div class="flex flex-col items-center">
+                        <div class="w-11 h-11 shrink-0 rounded-full bg-brand-500/15 border border-brand-500/40 text-brand-400 font-mono font-bold flex items-center justify-center">2</div>
+                        <div class="w-px flex-grow step-line mt-2"></div>
+                    </div>
+                    <div class="glass-panel rounded-2xl p-6 border border-slate-800 mb-2 w-full">
+                        <h3 class="text-xl font-bold text-white mb-2">Первый запуск</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-3">
+                            Открой cmd и введи:
+                        </p>
+                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 font-mono text-xs text-slate-300">
+                            <span class="text-slate-500">&gt;</span> vibelegacy
+                        </div>
+                        <p class="text-slate-400 text-sm leading-relaxed mt-3 mb-3">
+                            Появится такое сообщение:
+                        </p>
+                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 font-mono text-xs text-slate-300 leading-relaxed">
+                            Welcome to VibeLegacy!<br><br>
+                            Before you start, configure the <span class="text-brand-400">.CONFIG_ME</span> file with your API settings.<br><br>
+                            You can view all available commands with <span class="text-brand-400">/help</span>.<br><br>
+                            Main commands:<br><br>
+                            * <span class="text-brand-400">/add &lt;file&gt;</span> — attach a file to the conversation<br>
+                            * <span class="text-brand-400">/drop &lt;file&gt;</span> — remove an attached file<br>
+                            * <span class="text-brand-400">/clear</span> — clear the message history<br><br>
+                            Once configured, just describe what you want to build or change, and VibeLegacy will handle the code changes.<br><br>
+                            Have fun vibing — with control.
+                        </div>
+                        <p class="text-slate-400 text-sm leading-relaxed mt-3">
+                            Программа заодно сама откроет в проводнике папку с файлом <code class="text-brand-400 font-mono">.CONFIG_ME</code> — его и нужно найти и заполнить.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Шаг 3 -->
+                <div class="flex gap-5">
+                    <div class="flex flex-col items-center">
+                        <div class="w-11 h-11 shrink-0 rounded-full bg-brand-500/15 border border-brand-500/40 text-brand-400 font-mono font-bold flex items-center justify-center">3</div>
+                        <div class="w-px flex-grow step-line mt-2"></div>
+                    </div>
+                    <div class="glass-panel rounded-2xl p-6 border border-slate-800 mb-2 w-full">
+                        <h3 class="text-xl font-bold text-white mb-2">Получи API-ключ</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-4">
+                            Нужен ключ доступа к нейросети. Выбери один из двух вариантов:
+                        </p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800">
+                                <div class="font-mono font-bold text-brand-400 text-sm mb-2 flex items-center gap-2"><i class="fa-solid fa-globe text-xs"></i> OpenRouter</div>
+                                <ol class="space-y-1.5 text-xs text-slate-300 list-decimal list-inside">
+                                    <li>Зайди на <span class="text-brand-400 font-mono">openrouter.ai</span> и зарегистрируйся</li>
+                                    <li>Пополни баланс</li>
+                                    <li>Раздел <strong class="text-white">Keys</strong> → «Create Key» → скопируй ключ</li>
+                                </ol>
+                            </div>
+                            <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800">
+                                <div class="font-mono font-bold text-blue-400 text-sm mb-2 flex items-center gap-2"><i class="fa-solid fa-flag text-xs"></i> Polza.ai (для России)</div>
+                                <ol class="space-y-1.5 text-xs text-slate-300 list-decimal list-inside">
+                                    <li>Зайди на <span class="text-blue-400 font-mono">polza.ai</span> и зарегистрируйся</li>
+                                    <li>Пополни баланс картой РФ или через СБП — без VPN</li>
+                                    <li><strong class="text-white">Dashboard → API Keys</strong> → создай ключ и скопируй его</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Шаг 4 -->
+                <div class="flex gap-5">
+                    <div class="flex flex-col items-center">
+                        <div class="w-11 h-11 shrink-0 rounded-full bg-brand-500/15 border border-brand-500/40 text-brand-400 font-mono font-bold flex items-center justify-center">4</div>
+                        <div class="w-px flex-grow step-line mt-2"></div>
+                    </div>
+                    <div class="glass-panel rounded-2xl p-6 border border-slate-800 mb-2 w-full">
+                        <h3 class="text-xl font-bold text-white mb-2">Заполни .CONFIG_ME</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-4">
+                            Открой <code class="text-brand-400 font-mono">.CONFIG_ME</code> блокнотом (правый клик → «Открыть с помощью» → «Блокнот») и вставь один из вариантов ниже вместо всего содержимого. Ключ в примере — просто образец формата, замени его на свой настоящий.
+                        </p>
+
+                        <p class="text-xs font-mono text-brand-400 mb-1">Если ключ с OpenRouter:</p>
+                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 font-mono text-xs text-emerald-400 leading-relaxed mb-4">
+                            BASE_URL=https://openrouter.ai/api/v1<br>
+                            API_KEY=<span class="text-white">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</span><br>
+                            MODEL=anthropic/claude-haiku-5.5<br>
+                            REASONING=high
+                        </div>
+
+                        <p class="text-xs font-mono text-blue-400 mb-1">Если ключ с Polza.ai:</p>
+                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 font-mono text-xs text-emerald-400 leading-relaxed">
+                            BASE_URL=https://polza.ai/api/v1<br>
+                            API_KEY=<span class="text-white">pza_7K2vQ9mX4tL8nR1wZ6yB3cF5hJ0pS9dA2eU7iO4kM1gN8q</span><br>
+                            MODEL=anthropic/claude-haiku-5.5<br>
+                            REASONING=high
+                        </div>
+
+                        <p class="text-slate-400 text-sm mt-4"><i class="fa-solid fa-floppy-disk text-brand-400 mr-1"></i> Сохрани файл (Ctrl+S) и закрой блокнот.</p>
+                    </div>
+                </div>
+
+                <!-- Шаг 5 -->
+                <div class="flex gap-5">
+                    <div class="flex flex-col items-center">
+                        <div class="w-11 h-11 shrink-0 rounded-full bg-brand-500/15 border border-brand-500/40 text-brand-400 font-mono font-bold flex items-center justify-center">5</div>
+                        <div class="w-px flex-grow step-line mt-2"></div>
+                    </div>
+                    <div class="glass-panel rounded-2xl p-6 border border-slate-800 mb-2 w-full">
+                        <h3 class="text-xl font-bold text-white mb-2">Запусти программу в папке проекта</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-3">
+                            На этот раз cmd нужно открыть именно в папке проекта — той, где лежит код, который нужно поменять. Есть несколько способов:
+                        </p>
+                        <div class="space-y-3 mb-4">
+                            <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800">
+                                <div class="text-xs font-bold text-brand-400 mb-1">Через адресную строку проводника</div>
+                                <p class="text-xs text-slate-400 leading-relaxed">Открой папку проекта в проводнике, кликни в адресную строку (где путь к папке), сотри что там есть, набери <code class="text-brand-400 font-mono">cmd</code> и нажми <kbd class="px-1.5 py-0.5 bg-slate-800 rounded text-slate-300 border border-slate-700 text-xs">Enter</kbd> — cmd откроется сразу в этой папке.</p>
+                            </div>
+                            <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800">
+                                <div class="text-xs font-bold text-brand-400 mb-1">Командой cd в уже открытом cmd</div>
+                                <p class="text-xs text-slate-400 leading-relaxed mb-2">Если cmd уже открыт где-то ещё — перейди в папку проекта командой <code class="text-brand-400 font-mono">cd</code> и путём к ней:</p>
+                                <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 font-mono text-xs text-slate-300">
+                                    <span class="text-slate-500">&gt;</span> cd C:\Users\Имя\my_project
+                                </div>
+                            </div>
+                            <div class="p-3 rounded-xl bg-slate-900/60 border border-slate-800">
+                                <div class="text-xs font-bold text-brand-400 mb-1">Через терминал в IDE</div>
+                                <p class="text-xs text-slate-400 leading-relaxed">Если открываешь проект в VS Code или PyCharm — у них есть встроенный терминал (<span class="text-slate-300">View → Terminal</span> в VS Code, вкладка <span class="text-slate-300">Terminal</span> внизу в PyCharm), который уже открыт в папке проекта. Команду можно вводить прямо там.</p>
+                            </div>
+                        </div>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-3">Когда cmd открыт в папке проекта, запусти:</p>
+                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 font-mono text-xs text-slate-300">
+                            <span class="text-slate-500">&gt;</span> vibelegacy
+                        </div>
+                        <p class="text-slate-400 text-sm leading-relaxed mt-3">
+                            Появится то же приветственное сообщение, что и в шаге 2 — но теперь, раз конфиг заполнен, программа готова к работе и ждёт команду.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Шаг 6 -->
+                <div class="flex gap-5">
+                    <div class="flex flex-col items-center">
+                        <div class="w-11 h-11 shrink-0 rounded-full bg-brand-500/15 border border-brand-500/40 text-brand-400 font-mono font-bold flex items-center justify-center">6</div>
+                        <div class="w-px flex-grow step-line mt-2"></div>
+                    </div>
+                    <div class="glass-panel rounded-2xl p-6 border border-slate-800 mb-2 w-full">
+                        <h3 class="text-xl font-bold text-white mb-2">Добавь файлы своего проекта</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-3">
+                            Ты уже внутри VibeLegacy, запущенного в папке проекта. Командой <code class="text-brand-400 font-mono">/add</code> добавь файлы, с которыми нужно работать — модель будет видеть и сможет менять только их. Пути указываются относительно папки проекта, так что файл из подпапки добавляется вместе с её названием. Например, при такой структуре:
+                        </p>
+                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 font-mono text-xs text-slate-400 mb-3">
+                            📁 my_project<br>
+                            &nbsp;&nbsp;├── main.py<br>
+                            &nbsp;&nbsp;├── utils.py<br>
+                            &nbsp;&nbsp;└── 📁 src<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── helpers.py
+                        </div>
+                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 font-mono text-xs text-slate-300">
+                            <span class="text-slate-500">&gt;</span> /add main.py src/helpers.py
+                        </div>
+                        <p class="text-slate-500 text-xs mt-3">Можно перечислить сразу несколько файлов через пробел. Убрать файл — <code class="font-mono">/drop</code>, убрать все — <code class="font-mono">/dropall</code>.</p>
+                    </div>
+                </div>
+
+                <!-- Шаг 7 -->
+                <div class="flex gap-5">
+                    <div class="flex flex-col items-center">
+                        <div class="w-11 h-11 shrink-0 rounded-full bg-brand-500/15 border border-brand-500/40 text-brand-400 font-mono font-bold flex items-center justify-center">7</div>
+                        <div class="w-px flex-grow step-line mt-2"></div>
+                    </div>
+                    <div class="glass-panel rounded-2xl p-6 border border-slate-800 mb-2 w-full">
+                        <h3 class="text-xl font-bold text-white mb-2">Напиши, что нужно сделать</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-4">
+                            Опиши задачу обычными словами и нажми <kbd class="px-1.5 py-0.5 bg-slate-800 rounded text-slate-300 border border-slate-700 text-xs">Enter</kbd>. Для переноса строки — <kbd class="px-1.5 py-0.5 bg-slate-800 rounded text-slate-300 border border-slate-700 text-xs">Shift+Enter</kbd>.
+                        </p>
+                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 font-mono text-xs text-slate-300">
+                            <span class="text-slate-500">&gt;</span> добавь в функцию main() обработку ошибки деления на ноль
+                        </div>
+                        <p class="text-slate-400 text-sm leading-relaxed mt-4">
+                            Модель сама внесёт изменения прямо в файлы на диске — ничего руками редактировать не нужно. Остановить генерацию — <kbd class="px-1.5 py-0.5 bg-slate-800 rounded text-red-400 border border-slate-700 text-xs">Ctrl+C</kbd>.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Шаг 8 -->
+                <div class="flex gap-5">
+                    <div class="flex flex-col items-center">
+                        <div class="w-11 h-11 shrink-0 rounded-full bg-brand-500/15 border border-brand-500/40 text-brand-400 font-mono font-bold flex items-center justify-center">8</div>
+                        <div class="w-px flex-grow step-line mt-2"></div>
+                    </div>
+                    <div class="glass-panel rounded-2xl p-6 border border-slate-800 mb-2 w-full">
+                        <h3 class="text-xl font-bold text-white mb-2">Передумал? Отмени изменения</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-4">
+                            Не понравился результат — введи <code class="text-brand-400 font-mono">/undo</code>, файл вернётся к виду до правки ИИ. Снова нужны эти изменения — <code class="text-brand-400 font-mono">/redo</code> вернёт их обратно, включая ручные правки.
+                        </p>
+                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 font-mono text-xs text-slate-300 space-y-1">
+                            <div><span class="text-slate-500">&gt;</span> /undo</div>
+                            <div class="text-slate-500">Changes discarded. Use /redo to restore them.</div>
+                        </div>
+                        <div class="mt-4 flex items-start gap-2 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs">
+                            <i class="fa-solid fa-triangle-exclamation mt-0.5"></i>
+                            <span>Если ты сам вручную поправил файл после правки ИИ, программа предупредит об этом перед /undo или /redo — чтобы не затереть твои правки случайно.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Шаг 9 -->
+                <div class="flex gap-5">
+                    <div class="flex flex-col items-center">
+                        <div class="w-11 h-11 shrink-0 rounded-full bg-brand-500/15 border border-brand-500/40 text-brand-400 font-mono font-bold flex items-center justify-center">9</div>
+                    </div>
+                    <div class="glass-panel rounded-2xl p-6 border border-slate-800 mb-2 w-full">
+                        <h3 class="text-xl font-bold text-white mb-2">Готово!</h3>
+                        <p class="text-slate-400 text-sm leading-relaxed">
+                            Весь цикл работы: <code class="text-brand-400 font-mono">/add</code> → описал задачу → проверил результат → при необходимости <code class="text-brand-400 font-mono">/undo</code> или <code class="text-brand-400 font-mono">/redo</code>. Повторяй для следующей задачи. Выйти — <code class="text-brand-400 font-mono">CTRL+C</code>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Шпаргалка команд -->
+        <section class="py-16 bg-slate-950/50 border-t border-slate-800/60">
+            <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-10">
+                    <h2 class="text-xs font-mono font-bold tracking-widest text-brand-400 uppercase mb-2">Шпаргалка</h2>
+                    <h3 class="text-2xl sm:text-3xl font-extrabold text-white">Все команды в одном месте</h3>
+                </div>
+
+                <div class="glass-panel rounded-2xl overflow-hidden border border-slate-800">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left font-mono text-sm">
+                            <thead class="bg-slate-900/80 text-xs text-slate-400 uppercase border-b border-slate-800">
+                                <tr>
+                                    <th class="px-6 py-4">Команда</th>
+                                    <th class="px-6 py-4 font-sans">Что делает</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-800/60">
+                                <tr class="hover:bg-slate-900/50 transition-colors">
+                                    <td class="px-6 py-4 text-brand-400 font-bold whitespace-nowrap">/help</td>
+                                    <td class="px-6 py-4 text-slate-300 text-xs font-sans">Показать список всех команд</td>
+                                </tr>
+                                <tr class="hover:bg-slate-900/50 transition-colors">
+                                    <td class="px-6 py-4 text-brand-400 font-bold whitespace-nowrap">/add &lt;файл&gt;</td>
+                                    <td class="px-6 py-4 text-slate-300 text-xs font-sans">Добавить файл(ы) в контекст — можно несколько через пробел</td>
+                                </tr>
+                                <tr class="hover:bg-slate-900/50 transition-colors">
+                                    <td class="px-6 py-4 text-brand-400 font-bold whitespace-nowrap">/drop &lt;файл&gt;</td>
+                                    <td class="px-6 py-4 text-slate-300 text-xs font-sans">Убрать файл(ы) из контекста</td>
+                                </tr>
+                                <tr class="hover:bg-slate-900/50 transition-colors">
+                                    <td class="px-6 py-4 text-brand-400 font-bold whitespace-nowrap">/dropall</td>
+                                    <td class="px-6 py-4 text-slate-300 text-xs font-sans">Убрать все файлы из контекста разом</td>
+                                </tr>
+                                <tr class="hover:bg-slate-900/50 transition-colors">
+                                    <td class="px-6 py-4 text-brand-400 font-bold whitespace-nowrap">/clear</td>
+                                    <td class="px-6 py-4 text-slate-300 text-xs font-sans">Очистить историю переписки с моделью</td>
+                                </tr>
+                                <tr class="hover:bg-slate-900/50 transition-colors">
+                                    <td class="px-6 py-4 text-brand-400 font-bold whitespace-nowrap">/undo</td>
+                                    <td class="px-6 py-4 text-slate-300 text-xs font-sans">Отменить последнюю правку ИИ (по шагам)</td>
+                                </tr>
+                                <tr class="hover:bg-slate-900/50 transition-colors">
+                                    <td class="px-6 py-4 text-brand-400 font-bold whitespace-nowrap">/redo</td>
+                                    <td class="px-6 py-4 text-slate-300 text-xs font-sans">Вернуть отменённую правку ИИ (по шагам)</td>
+                                </tr>
+                                <tr class="hover:bg-slate-900/50 transition-colors">
+                                    <td class="px-6 py-4 text-brand-400 font-bold whitespace-nowrap">/config</td>
+                                    <td class="px-6 py-4 text-slate-300 text-xs font-sans">Открыть папку с файлом настроек .CONFIG_ME</td>
+                                </tr>
+                                <tr class="hover:bg-slate-900/50 transition-colors">
+                                    <td class="px-6 py-4 text-brand-400 font-bold whitespace-nowrap">/exit</td>
+                                    <td class="px-6 py-4 text-slate-300 text-xs font-sans">Выйти из VibeLegacy</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="mt-6 p-4 rounded-xl bg-brand-500/10 border border-brand-500/20 text-xs text-slate-300 flex items-start gap-2">
+                    <i class="fa-solid fa-circle-info text-brand-400 mt-0.5"></i>
+                    <p>Пути к файлам в <code class="font-mono text-white">/add</code> указываются относительно той папки, откуда запущена программа.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Если что-то пошло не так -->
+        <section class="py-16">
+            <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="glass-panel rounded-2xl p-8 border border-slate-800 glow-border text-center">
+                    <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-500/10 border border-blue-500/30 text-blue-400 text-xl mb-4">
+                        <i class="fa-solid fa-life-ring"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">Что-то не работает?</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-6 max-w-lg mx-auto">
+                        Проверь, что в <code class="text-brand-400 font-mono">.CONFIG_ME</code> нет лишних пробелов вокруг ключа и что на балансе провайдера есть средства. Если не помогло — опиши проблему в Issues на GitHub.
+                    </p>
+                    <a href="https://github.com/Invoidy/VibeLegacy/issues" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-6 py-3 bg-slate-800 hover:bg-slate-700 text-white font-medium rounded-xl border border-slate-700 transition-all text-sm">
+                        <i class="fa-brands fa-github"></i> Открыть Issues на GitHub
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 border-t border-slate-800 py-10 text-slate-400 text-xs font-mono">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="flex items-center space-x-3">
+                    <span class="text-brand-400 font-bold text-base">VibeLegacy</span>
+                    <span class="text-slate-600">|</span>
+                    <a href="index.html" class="hover:text-brand-400 transition-colors">На главную</a>
+                </div>
+                <a href="https://github.com/Invoidy/VibeLegacy" target="_blank" class="hover:text-white transition-colors">
+                    <i class="fa-brands fa-github text-base mr-1"></i> GitHub Repository
+                </a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
